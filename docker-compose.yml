@@ -1,0 +1,23 @@
+services:
+  api:
+    build:
+      context: ./backend
+    env_file:
+      - .env
+    environment:
+      # Container-internal paths always win over whatever a contributor's
+      # .env has for local non-Docker development (e.g. sqlite+aiosqlite:///./data/game.db).
+      DATABASE_URL: sqlite+aiosqlite:////data/game.db
+      CONTENT_DIR: /app/content
+    volumes:
+      - sqlite_data:/data
+      - ./content:/app/content:ro
+    ports:
+      # Exposed directly for now since there is no reverse proxy in front of
+      # the API yet. Phase 5 adds a Caddy `web` service and removes this
+      # direct host port mapping.
+      - "8000:8000"
+    restart: unless-stopped
+
+volumes:
+  sqlite_data:

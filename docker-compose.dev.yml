@@ -1,0 +1,27 @@
+services:
+  api:
+    volumes:
+      # Bind-mount source for live reload, but keep the venv in a named
+      # volume so the container's Linux-built virtualenv isn't shadowed by
+      # a host-built one (Windows/macOS binaries won't run in the container).
+      - ./backend:/app
+      - backend_venv:/app/.venv
+    command: sh -c "uv sync --locked && uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  frontend:
+    image: node:24-slim
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    environment:
+      VITE_API_PROXY_TARGET: http://api:8000
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
+volumes:
+  backend_venv:
+  frontend_node_modules:
