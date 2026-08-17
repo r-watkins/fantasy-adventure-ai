@@ -5,14 +5,20 @@ from fastapi import FastAPI
 
 from app.api.health import router as health_router
 from app.core.config import get_settings
+from app.db.session import create_engine, create_session_factory
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    # Startup: database engine/sessionmaker wiring (Task 4) and content
-    # validation (Task 6) attach here once those pieces exist.
+    settings = app.state.settings
+    engine = create_engine(settings.database_url)
+    app.state.engine = engine
+    app.state.session_factory = create_session_factory(engine)
+
+    # Content validation (Task 6) attaches here once it exists.
     yield
-    # Shutdown: engine disposal attaches here once Task 4 adds the engine.
+
+    await engine.dispose()
 
 
 def create_app() -> FastAPI:

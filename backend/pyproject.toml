@@ -4,14 +4,17 @@ version = "0.1.0"
 description = "FastAPI backend for Fantasy AI Adventure"
 requires-python = ">=3.13"
 dependencies = [
+    "aiosqlite>=0.22.1",
     "fastapi>=0.141.1",
     "pydantic-settings>=2.15.0",
+    "sqlalchemy>=2.0.52",
     "uvicorn[standard]>=0.52.3",
 ]
 
 [dependency-groups]
 dev = [
     "anyio>=4.14.2",
+    "asgi-lifespan>=2.1.0",
     "httpx>=0.28.1",
     "pytest>=9.1.1",
     "ruff>=0.16.3",
@@ -23,6 +26,9 @@ target-version = "py313"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "ASYNC"]
+# B008: FastAPI's Depends()/Query()/etc. are meant to be used as argument
+# defaults - that's the framework's own dependency-injection idiom, not a bug.
+ignore = ["B008"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
