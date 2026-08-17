@@ -5,6 +5,7 @@ description = "FastAPI backend for Fantasy AI Adventure"
 requires-python = ">=3.13"
 dependencies = [
     "aiosqlite>=0.22.1",
+    "alembic>=1.19.1",
     "fastapi>=0.141.1",
     "pydantic-settings>=2.15.0",
     "sqlalchemy>=2.0.52",
@@ -23,6 +24,10 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py313"
+# Alembic's own revision template doesn't follow this project's style
+# (Union[...] instead of |, long generated create_table calls); these are
+# generated files, not hand-written code.
+extend-exclude = ["alembic/versions"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "ASYNC"]
