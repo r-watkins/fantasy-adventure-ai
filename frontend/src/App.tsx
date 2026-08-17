@@ -2,6 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
+import { ModeToggle } from './components/mode-toggle'
 import './App.css'
 
 function App() {
@@ -9,6 +10,9 @@ function App() {
 
   return (
     <>
+      <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 50 }}>
+        <ModeToggle />
+      </div>
       <section id="center">
         <div className="hero">
           <img src={heroImg} className="base" width="170" height="179" alt="" />
