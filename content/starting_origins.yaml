@@ -1,0 +1,21 @@
+origins:
+  - id: tavern_cook
+    name: Tavern Cook
+    tagline: The kitchen knows every secret that passes through the inn.
+    description: You keep the Hearth & Thistle alive with soup, sharp knives, and sharper hearing.
+    start_location_id: ashfen_tavern_kitchen
+    starting_traits: [resourceful, observant]
+    starting_inventory:
+      - item_id: iron_cook_knife
+        quantity: 1
+    opening_hook: A cooking fire flares unnaturally blue just as a hooded stranger arrives through the rain.
+  - id: wheat_farmer
+    name: Wheat Farmer
+    tagline: You know the fields, the weather, and what should not grow beneath the soil.
+    description: You work a small family plot beyond the village boundary.
+    start_location_id: ashfen_east_fields
+    starting_traits: [steadfast, practical]
+    starting_inventory:
+      - item_id: field_sickle
+        quantity: 1
+    opening_hook: A section of wheat has withered overnight in the shape of a spiral.

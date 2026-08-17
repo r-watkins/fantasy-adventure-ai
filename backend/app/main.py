@@ -1,11 +1,13 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 
 from app.api.health import router as health_router
 from app.core.config import get_settings
 from app.db.session import create_engine, create_session_factory
+from app.game.content_loader import load_content
 
 
 @asynccontextmanager
@@ -15,7 +17,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.engine = engine
     app.state.session_factory = create_session_factory(engine)
 
-    # Content validation (Task 6) attaches here once it exists.
+    # Fail fast: an invalid content directory should crash startup rather
+    # than run with broken/missing world content.
+    app.state.content = load_content(Path(settings.content_dir))
+
     yield
 
     await engine.dispose()

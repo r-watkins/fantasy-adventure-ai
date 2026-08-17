@@ -1,0 +1,17 @@
+world_id: ashfen_realm
+version: 1
+name: The Ashfen Realm
+tone: Grounded high fantasy; mysterious, hopeful, and dangerous without graphic gore.
+core_lore:
+  - The old imperial roads are failing, and remote villages govern themselves.
+  - Magic is real but costly; powerful relics are rare and feared.
+locations:
+  - id: ashfen_tavern
+    name: The Hearth & Thistle
+    description: A weathered roadside inn at the edge of Ashfen village.
+  - id: ashfen_tavern_kitchen
+    name: The Hearth & Thistle Kitchen
+    description: A cramped, warm kitchen thick with the smell of woodsmoke and stew.
+  - id: ashfen_east_fields
+    name: Ashfen East Fields
+    description: Rolling wheat fields on the village's eastern edge, bordered by an old stone wall.

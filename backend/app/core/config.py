@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     llm_provider: Literal["mock", "gemini"] = "mock"
     gemini_api_key: str = ""
     gemini_model: str = "gemini-2.5-flash-lite"
+    # Default assumes the app runs with cwd=backend/ (e.g. `uv run uvicorn ...`
+    # from that directory). Docker sets this to the mounted content path
+    # (e.g. /app/content) instead.
+    content_dir: str = "../content"
 
 
 @lru_cache

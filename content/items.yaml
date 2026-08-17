@@ -1,0 +1,22 @@
+items:
+  - id: iron_cook_knife
+    name: Iron Cook Knife
+    category: weapon
+    rarity: common
+    description: A balanced kitchen knife, kept sharp through long shifts.
+    tags: [starting_item, blade, tool]
+    usable_in_prompt: true
+  - id: ember_charm
+    name: Ember Charm
+    category: trinket
+    rarity: uncommon
+    description: A warm pendant that flares near old fire magic.
+    tags: [magic, quest]
+    usable_in_prompt: true
+  - id: field_sickle
+    name: Field Sickle
+    category: weapon
+    rarity: common
+    description: A curved blade worn smooth by years of harvest work.
+    tags: [starting_item, blade, tool]
+    usable_in_prompt: true

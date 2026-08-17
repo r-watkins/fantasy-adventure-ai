@@ -1,0 +1,10 @@
+npcs:
+  - id: mira_veyl
+    name: Mira Veyl
+    role: Traveling courier
+    description: A guarded courier with rain-dark hair and a missing satchel.
+    motivations:
+      - Recover a stolen ledger.
+      - Avoid the local reeve.
+    secrets:
+      - The ledger contains a coded route to an imperial cache.
