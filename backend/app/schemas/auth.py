@@ -15,6 +15,16 @@ class RegisterRequest(BaseModel):
         return value.strip().lower()
 
 
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(max_length=128)
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        return value.strip().lower()
+
+
 class UserPublic(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
