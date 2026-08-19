@@ -16,3 +16,15 @@ export function listSaves(): Promise<SaveSlotSummary[]> {
 export function archiveSave(saveId: string): Promise<SaveSlotSummary> {
   return apiClient.patch<SaveSlotSummary>(`/api/saves/${saveId}`, { archived: true })
 }
+
+export interface CreateSaveParams {
+  originId: string
+  characterName?: string
+}
+
+export function createSave({ originId, characterName }: CreateSaveParams): Promise<SaveSlotSummary> {
+  return apiClient.post<SaveSlotSummary>('/api/saves', {
+    origin_id: originId,
+    character_name: characterName,
+  })
+}
