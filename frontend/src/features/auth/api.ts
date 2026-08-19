@@ -13,3 +13,7 @@ export function loginRequest(email: string, password: string): Promise<Authentic
 export function logoutRequest(): Promise<void> {
   return apiClient.post<void>('/api/auth/logout')
 }
+
+export function getMe(): Promise<AuthenticatedUser> {
+  return apiClient.get<AuthenticatedUser>('/api/me')
+}

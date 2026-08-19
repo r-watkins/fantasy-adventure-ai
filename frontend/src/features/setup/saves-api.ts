@@ -28,3 +28,29 @@ export function createSave({ originId, characterName }: CreateSaveParams): Promi
     character_name: characterName,
   })
 }
+
+export interface StoryMessage {
+  role: 'player' | 'narrator' | 'system'
+  content: string
+  turn_number: number
+  created_at: string
+}
+
+// Minimal shape for the Phase 2 placeholder game screen - Task 29 will add
+// a proper GameState type once the real gameplay loop needs the full
+// documented shape (inventory, quests, world_flags, etc).
+export interface GameStatePreview {
+  player: {
+    name: string
+    location_id: string
+  }
+}
+
+export interface SaveSlotDetail extends SaveSlotSummary {
+  game_state_json: GameStatePreview
+  messages: StoryMessage[]
+}
+
+export function getSave(saveId: string): Promise<SaveSlotDetail> {
+  return apiClient.get<SaveSlotDetail>(`/api/saves/${saveId}`)
+}
