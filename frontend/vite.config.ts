@@ -1,7 +1,9 @@
 import path from 'node:path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+// `vitest/config` re-exports Vite's defineConfig with the `test` field
+// typed, so this one config file covers both Vite and Vitest.
+import { defineConfig } from 'vitest/config'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -30,5 +32,9 @@ export default defineConfig({
       // `npm run dev` on the host, where native events work fine.
       usePolling: process.env.VITE_USE_POLLING === 'true',
     },
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
   },
 })
