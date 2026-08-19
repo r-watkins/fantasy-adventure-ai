@@ -6,7 +6,74 @@ The narrator is an LLM assistant; game state (accounts, saves, inventory, world 
 
 ## Status
 
-Early development — following an implementation checklist phase by phase. Local development instructions land here once Phase 1 of that checklist is complete.
+Early development — following an implementation checklist phase by phase. Accounts, the game loop, real LLM integration, and production deployment are not built yet.
+
+## Local development
+
+**Prerequisites:** [Docker](https://docs.docker.com/get-docker/) with Compose v2 (`docker compose`, not the standalone `docker-compose`).
+
+```bash
+cp .env.example .env
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+```
+
+This starts two services with hot reload:
+
+- **Frontend** (Vite dev server) — http://localhost:5173
+- **Backend** (FastAPI, `uvicorn --reload`) — http://localhost:8000, health check at http://localhost:8000/api/health
+
+The frontend proxies `/api/*` requests to the backend itself (see `frontend/vite.config.ts`), so the browser only ever talks to `http://localhost:5173` — no CORS configuration needed in dev.
+
+By default `LLM_PROVIDER=mock`, so the app runs fully offline with no external API key required.
+
+SQLite data persists in a named Docker volume (`sqlite_data`) across restarts. To reset it entirely: `docker compose down -v`.
+
+A seed command that creates a test user and sample save for local development is planned but not implemented yet — it depends on the accounts/saves work in a later phase.
+
+### Running without Docker
+
+The frontend and backend can also run directly on the host if you have a current Node.js LTS and [uv](https://docs.astral.sh/uv/) installed:
+
+```bash
+# Backend
+cd backend
+uv run uvicorn app.main:app --reload
+
+# Frontend (separate terminal)
+cd frontend
+npm install
+npm run dev
+```
+
+Without Docker, the frontend's `/api` proxy falls back to `http://localhost:8000` automatically.
+
+### Tests and linting
+
+```bash
+# Backend
+cd backend
+uv run pytest
+uv run ruff check .
+
+# Frontend
+cd frontend
+npm run test
+npm run lint
+npx tsc -b
+```
+
+### Environment variables
+
+All variables live in `.env` (copied from `.env.example`, gitignored). Docker Compose overrides `DATABASE_URL` and `CONTENT_DIR` to container-internal paths regardless of what's in `.env` — see `docker-compose.yml`.
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `DATABASE_URL` | `sqlite+aiosqlite:///./data/game.db` | SQLAlchemy async connection string. Ignored inside Docker (see above). |
+| `ENVIRONMENT` | `development` | `development` \| `production`. |
+| `LLM_PROVIDER` | `mock` | `mock` (deterministic, offline) \| `gemini` (real API calls, requires `GEMINI_API_KEY`). |
+| `GEMINI_API_KEY` | *(empty)* | Required only when `LLM_PROVIDER=gemini`. |
+| `GEMINI_MODEL` | `gemini-2.5-flash-lite` | Gemini model ID. |
+| `SITE_ADDRESS` | `localhost` | Production-only: the domain Caddy serves and obtains HTTPS for (`deploy/Caddyfile`). Not used in local dev. |
 
 ## Stack
 
