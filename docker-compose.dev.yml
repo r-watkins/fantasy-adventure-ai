@@ -16,6 +16,10 @@ services:
       - frontend_node_modules:/app/node_modules
     environment:
       VITE_API_PROXY_TARGET: http://api:8000
+      # Docker's bind-mount filesystem doesn't propagate native file-change
+      # events into the container - without this, editing files on the host
+      # never triggers HMR. See vite.config.ts for details.
+      VITE_USE_POLLING: "true"
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
     ports:
       - "5173:5173"

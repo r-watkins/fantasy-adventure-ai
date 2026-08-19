@@ -22,5 +22,13 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+    watch: {
+      // Docker Desktop's bind-mount filesystem doesn't propagate native
+      // file-change events into the container (confirmed by testing: edits
+      // on the host never triggered HMR without this), so fall back to
+      // polling - only set by the Docker dev overlay, never for bare
+      // `npm run dev` on the host, where native events work fine.
+      usePolling: process.env.VITE_USE_POLLING === 'true',
+    },
   },
 })
