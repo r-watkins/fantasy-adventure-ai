@@ -10,6 +10,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from app.api.auth import router as auth_router
 from app.api.health import router as health_router
 from app.api.me import router as me_router
+from app.api.saves import router as saves_router
 from app.core.config import get_settings
 from app.core.rate_limit import limiter
 from app.db.session import create_engine, create_session_factory
@@ -42,6 +43,7 @@ def create_app() -> FastAPI:
     app.include_router(health_router, prefix="/api")
     app.include_router(auth_router, prefix="/api")
     app.include_router(me_router, prefix="/api")
+    app.include_router(saves_router, prefix="/api")
     return app
 
 
