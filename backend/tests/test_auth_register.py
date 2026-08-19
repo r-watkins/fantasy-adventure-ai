@@ -1,5 +1,9 @@
 import pytest
 from httpx import AsyncClient
+from sqlalchemy import select
+
+from app.db.session import create_engine, create_session_factory
+from app.models.user import User
 
 pytestmark = pytest.mark.anyio
 
@@ -55,3 +59,25 @@ async def test_register_rejects_invalid_email(client: AsyncClient) -> None:
     )
 
     assert response.status_code == 422
+
+
+async def test_register_stores_argon2id_hash_not_plaintext(
+    client: AsyncClient, migrated_db_url: str
+) -> None:
+    plaintext_password = "correct horse battery"
+    response = await client.post(
+        "/api/auth/register",
+        json={"email": "hashcheck@example.com", "password": plaintext_password},
+    )
+    assert response.status_code == 201
+
+    engine = create_engine(migrated_db_url)
+    session_factory = create_session_factory(engine)
+    async with session_factory() as db:
+        user = await db.scalar(select(User).where(User.email == "hashcheck@example.com"))
+
+    assert user is not None
+    assert user.password_hash != plaintext_password
+    assert user.password_hash.startswith("$argon2id$")
+
+    await engine.dispose()

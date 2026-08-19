@@ -48,3 +48,26 @@ async def test_put_settings_requires_authentication(client: AsyncClient) -> None
     response = await client.put("/api/me/settings", json={"theme_preference": "dark"})
 
     assert response.status_code == 401
+
+
+async def test_theme_preference_persists_across_login_sessions(client: AsyncClient) -> None:
+    register_response = await client.post(
+        "/api/auth/register",
+        json={"email": "theme-persist@example.com", "password": "correct horse battery"},
+    )
+    assert register_response.status_code == 201
+
+    put_response = await client.put("/api/me/settings", json={"theme_preference": "light"})
+    assert put_response.status_code == 200
+
+    logout_response = await client.post("/api/auth/logout")
+    assert logout_response.status_code == 204
+
+    login_response = await client.post(
+        "/api/auth/login",
+        json={"email": "theme-persist@example.com", "password": "correct horse battery"},
+    )
+    assert login_response.status_code == 200
+
+    get_response = await client.get("/api/me")
+    assert get_response.json()["theme_preference"] == "light"
