@@ -41,6 +41,22 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return body as T
 }
 
+// Backend detail strings (e.g. "Invalid email or password", "Email is
+// already registered") are already user-appropriate copy - surface them
+// as-is. Pydantic validation errors (422) come back as a list, not a
+// string, so those fall through to the caller's fallback message.
+export function describeApiError(error: unknown, fallback: string): string {
+  if (error instanceof ApiError) {
+    if (error.status === 429) {
+      return 'Too many attempts. Please wait a moment and try again.'
+    }
+    if (typeof error.detail === 'string') {
+      return error.detail
+    }
+  }
+  return fallback
+}
+
 export const apiClient = {
   get: <T>(path: string) => request<T>(path, { method: 'GET' }),
   post: <T>(path: string, body?: JsonBody) =>
