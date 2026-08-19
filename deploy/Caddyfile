@@ -1,0 +1,25 @@
+# Production reverse proxy: serves the built frontend, proxies /api/* to the
+# backend, and terminates HTTPS automatically (Let's Encrypt) once
+# SITE_ADDRESS is set to a real domain that resolves to this host.
+#
+# Not wired into docker-compose.yml yet - the `web` service that mounts this
+# file is added in a later production-readiness task, alongside the frontend
+# production image that provides the static files served from /srv below.
+{$SITE_ADDRESS:localhost} {
+	encode zstd gzip
+
+	# Must come before the catch-all `handle` block below: `handle` blocks are
+	# mutually exclusive and evaluated in the order they're written, so a
+	# request matching /api/* would otherwise also match the catch-all first.
+	handle /api/* {
+		reverse_proxy api:8000
+	}
+
+	handle {
+		root * /srv
+		# SPA fallback: client-side routes (e.g. a deep link refreshed in the
+		# browser) must still resolve to index.html, not 404.
+		try_files {path} /index.html
+		file_server
+	}
+}
