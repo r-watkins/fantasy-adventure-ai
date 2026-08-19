@@ -8,6 +8,7 @@ from httpx import ASGITransport, AsyncClient
 
 from alembic import command
 from app.core.config import Settings, get_settings
+from app.core.rate_limit import limiter
 from app.main import create_app
 
 REPO_CONTENT_DIR = Path(__file__).resolve().parents[2] / "content"
@@ -16,6 +17,15 @@ REPO_CONTENT_DIR = Path(__file__).resolve().parents[2] / "content"
 @pytest.fixture
 def anyio_backend() -> str:
     return "asyncio"
+
+
+@pytest.fixture(autouse=True)
+def _reset_rate_limiter() -> None:
+    # `limiter` is a process-wide singleton (imported once, shared by every
+    # app instance create_app() builds), so its in-memory counters would
+    # otherwise leak across tests/test files that all hit the same
+    # rate-limited endpoints from the same apparent client IP.
+    limiter.reset()
 
 
 def _alembic_config(database_url: str) -> Config:

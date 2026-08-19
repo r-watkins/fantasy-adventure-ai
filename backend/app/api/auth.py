@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_session
 from app.core.config import get_settings
+from app.core.rate_limit import limiter
 from app.core.security import clear_session_cookie, set_session_cookie
 from app.db.session import get_db_session
 from app.models.session import UserSession
@@ -19,7 +20,9 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/register", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
+@limiter.limit("3/hour")
 async def register(
+    request: Request,
     body: RegisterRequest,
     response: Response,
     db: AsyncSession = Depends(get_db_session),
@@ -38,7 +41,9 @@ async def register(
 
 
 @router.post("/login", response_model=UserPublic)
+@limiter.limit("5/minute")
 async def login(
+    request: Request,
     body: LoginRequest,
     response: Response,
     db: AsyncSession = Depends(get_db_session),
