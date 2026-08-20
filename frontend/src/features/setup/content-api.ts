@@ -33,3 +33,13 @@ export interface Item {
 export function listItems(): Promise<Item[]> {
   return apiClient.get<Item[]>('/api/content/items')
 }
+
+export interface Location {
+  id: string
+  name: string
+  description: string
+}
+
+export function listLocations(): Promise<Location[]> {
+  return apiClient.get<Location[]>('/api/content/locations')
+}

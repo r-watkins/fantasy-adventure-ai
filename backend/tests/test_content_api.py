@@ -32,6 +32,16 @@ async def test_list_items_returns_seeded_items(client: AsyncClient) -> None:
     assert all({"id", "name", "category", "rarity", "description"} <= item.keys() for item in items)
 
 
+async def test_list_locations_returns_seeded_locations(client: AsyncClient) -> None:
+    await _register(client, "content-locations@example.com")
+
+    response = await client.get("/api/content/locations")
+
+    assert response.status_code == 200
+    location_ids = {location["id"] for location in response.json()}
+    assert {"ashfen_tavern_kitchen", "ashfen_east_fields"} <= location_ids
+
+
 async def test_list_origins_requires_authentication(client: AsyncClient) -> None:
     response = await client.get("/api/content/origins")
 
@@ -40,5 +50,11 @@ async def test_list_origins_requires_authentication(client: AsyncClient) -> None
 
 async def test_list_items_requires_authentication(client: AsyncClient) -> None:
     response = await client.get("/api/content/items")
+
+    assert response.status_code == 401
+
+
+async def test_list_locations_requires_authentication(client: AsyncClient) -> None:
+    response = await client.get("/api/content/locations")
 
     assert response.status_code == 401
