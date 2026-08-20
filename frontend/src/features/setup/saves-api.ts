@@ -36,14 +36,21 @@ export interface StoryMessage {
   created_at: string
 }
 
-// Minimal shape for the Phase 2 placeholder game screen - Task 29 will add
-// a proper GameState type once the real gameplay loop needs the full
-// documented shape (inventory, quests, world_flags, etc).
+export interface InventoryEntry {
+  item_id: string
+  quantity: number
+  equipped: boolean
+}
+
+// Grows field-by-field as later frontend tasks need more of the documented
+// game_state_json shape (quests, world_flags, characters, etc - see the
+// backend's app/game/game_state.py for the full schema).
 export interface GameStatePreview {
   player: {
     name: string
     location_id: string
   }
+  inventory: InventoryEntry[]
 }
 
 export interface SaveSlotDetail extends SaveSlotSummary {

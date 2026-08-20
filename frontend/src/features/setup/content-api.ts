@@ -19,3 +19,17 @@ export interface Origin {
 export function listOrigins(): Promise<Origin[]> {
   return apiClient.get<Origin[]>('/api/content/origins')
 }
+
+export interface Item {
+  id: string
+  name: string
+  category: string
+  rarity: string
+  description: string
+  tags: string[]
+  usable_in_prompt: boolean
+}
+
+export function listItems(): Promise<Item[]> {
+  return apiClient.get<Item[]>('/api/content/items')
+}
