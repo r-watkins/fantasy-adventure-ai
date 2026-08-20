@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import {
   createRootRoute,
   createRoute,
@@ -170,8 +171,15 @@ const settingsRoute = createRoute({
 function SettingsRouteComponent() {
   const navigate = useNavigate()
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   async function handleLoggedOut() {
+    // Query cache (saves, theme, etc.) is keyed by resource, not by user -
+    // without this, a subsequent sign-in in the same tab within staleTime
+    // can serve the departed session's cached data. Found via Task 40's E2E
+    // test: sign-out/in showed an empty save list even though the save just
+    // created moments earlier still existed server-side.
+    queryClient.clear()
     await router.invalidate()
     await navigate({ to: '/' })
   }
