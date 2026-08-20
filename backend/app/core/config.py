@@ -20,6 +20,12 @@ class Settings(BaseSettings):
     # configured bounds". No specific number is specified anywhere upstream -
     # provisional default, same status as Task 19's rate-limit thresholds.
     max_item_quantity: int = 99
+    # Source doc §5/§7: game_state_json.recent_context is a bounded rolling
+    # window of the most recent messages, kept alongside the full
+    # story_messages history so prompt assembly (Task 42) can read it
+    # without an extra query. No specific window size is specified upstream -
+    # provisional default (5 player/narrator exchanges).
+    recent_context_window: int = 10
 
 
 @lru_cache

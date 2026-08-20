@@ -100,7 +100,10 @@ async def get_save_messages(db: AsyncSession, save_id: str, limit: int = 20) -> 
     result = await db.scalars(
         select(StoryMessage)
         .where(StoryMessage.save_slot_id == save_id)
-        .order_by(StoryMessage.turn_number.desc())
+        # A turn writes both a player and a narrator message under the same
+        # turn_number (Task 33) - created_at breaks that tie so the player's
+        # message always sorts before the narrator's reply to it.
+        .order_by(StoryMessage.turn_number.desc(), StoryMessage.created_at.desc())
         .limit(limit)
     )
     return list(reversed(result.all()))
