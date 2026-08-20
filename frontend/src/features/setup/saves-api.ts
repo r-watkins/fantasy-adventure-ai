@@ -68,3 +68,20 @@ export interface SaveSlotDetail extends SaveSlotSummary {
 export function getSave(saveId: string): Promise<SaveSlotDetail> {
   return apiClient.get<SaveSlotDetail>(`/api/saves/${saveId}`)
 }
+
+export interface TurnMessage {
+  id: string
+  role: 'player' | 'narrator' | 'system'
+  content: string
+}
+
+export interface SubmitTurnResult {
+  player_message: TurnMessage
+  narrator_message: TurnMessage
+  game_state: GameStatePreview
+  turn_number: number
+}
+
+export function submitTurn(saveId: string, message: string): Promise<SubmitTurnResult> {
+  return apiClient.post<SubmitTurnResult>(`/api/saves/${saveId}/turns`, { message })
+}

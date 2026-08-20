@@ -1,4 +1,12 @@
-import { useId, useState, type FormEvent, type KeyboardEvent } from 'react'
+import {
+  forwardRef,
+  useId,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+} from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -9,11 +17,28 @@ interface ComposerProps {
   errorMessage?: string | null
 }
 
-export function Composer({ onSubmit, errorMessage = null }: ComposerProps) {
+export interface ComposerHandle {
+  /** Appends text to whatever the player has already typed and refocuses
+   * the textarea - used by the inventory's click-to-insert action. */
+  insertText: (text: string) => void
+}
+
+export const Composer = forwardRef<ComposerHandle, ComposerProps>(function Composer(
+  { onSubmit, errorMessage = null },
+  ref
+) {
   const [value, setValue] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const textareaId = useId()
   const errorId = useId()
+
+  useImperativeHandle(ref, () => ({
+    insertText(text: string) {
+      setValue((current) => (current.trim() ? `${current.trimEnd()} ${text}` : text))
+      textareaRef.current?.focus()
+    },
+  }))
 
   async function submit() {
     const trimmed = value.trim()
@@ -50,6 +75,7 @@ export function Composer({ onSubmit, errorMessage = null }: ComposerProps) {
       </Label>
       <div className="flex items-end gap-2">
         <Textarea
+          ref={textareaRef}
           id={textareaId}
           value={value}
           onChange={(event) => setValue(event.target.value)}
@@ -76,4 +102,4 @@ export function Composer({ onSubmit, errorMessage = null }: ComposerProps) {
       )}
     </form>
   )
-}
+})

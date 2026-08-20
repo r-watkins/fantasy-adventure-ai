@@ -1,7 +1,8 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { createRef } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 
-import { Composer } from './Composer'
+import { Composer, type ComposerHandle } from './Composer'
 
 function getTextarea() {
   return screen.getByLabelText('What do you do?')
@@ -79,5 +80,25 @@ describe('Composer', () => {
     render(<Composer onSubmit={vi.fn()} errorMessage="Could not reach the narrator." />)
 
     expect(screen.getByRole('alert')).toHaveTextContent('Could not reach the narrator.')
+  })
+
+  it('exposes insertText via ref, appending to existing text and focusing the textarea', () => {
+    const ref = createRef<ComposerHandle>()
+    render(<Composer ref={ref} onSubmit={vi.fn()} />)
+
+    fireEvent.change(getTextarea(), { target: { value: 'I look at the' } })
+    act(() => ref.current?.insertText('Iron Cook Knife'))
+
+    expect(getTextarea()).toHaveValue('I look at the Iron Cook Knife')
+    expect(getTextarea()).toHaveFocus()
+  })
+
+  it('insertText on an empty textarea sets the text directly, with no leading space', () => {
+    const ref = createRef<ComposerHandle>()
+    render(<Composer ref={ref} onSubmit={vi.fn()} />)
+
+    act(() => ref.current?.insertText('Ember Charm'))
+
+    expect(getTextarea()).toHaveValue('Ember Charm')
   })
 })

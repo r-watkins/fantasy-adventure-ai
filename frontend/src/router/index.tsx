@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query'
 import {
   createRootRoute,
   createRoute,
@@ -17,9 +16,9 @@ import { buttonVariants } from '@/components/ui/button'
 import { LoginForm } from '@/features/auth/LoginForm'
 import { RegisterForm } from '@/features/auth/RegisterForm'
 import type { AuthenticatedUser } from '@/features/auth/types'
+import { GameScreen } from '@/features/game/GameScreen'
 import { OriginSelect } from '@/features/setup/OriginSelect'
 import { SaveSlotSelect } from '@/features/setup/SaveSlotSelect'
-import { getSave } from '@/features/setup/saves-api'
 import { SettingsScreen } from '@/features/settings/SettingsScreen'
 
 import { fetchCurrentUser } from './auth-guard'
@@ -149,39 +148,12 @@ const gameRoute = createRoute({
       throw redirect({ to: '/' })
     }
   },
-  component: GameScreenPlaceholder,
+  component: GameRouteComponent,
 })
 
-function GameScreenPlaceholder() {
+function GameRouteComponent() {
   const { saveId } = gameRoute.useParams()
-  const saveQuery = useQuery({ queryKey: ['saves', saveId], queryFn: () => getSave(saveId) })
-
-  if (saveQuery.isLoading) {
-    return <p className="text-sm text-muted-foreground">Loading your adventure…</p>
-  }
-
-  if (saveQuery.isError || !saveQuery.data) {
-    return <p role="alert" className="text-sm text-destructive">Could not load this save.</p>
-  }
-
-  const { name, game_state_json: state, messages } = saveQuery.data
-
-  return (
-    <div className="flex w-full max-w-lg flex-col gap-4">
-      <h1 className="text-lg font-medium">{name}</h1>
-      <p className="text-sm text-muted-foreground">
-        Playing as {state.player.name} at {state.player.location_id}.
-      </p>
-      {messages.map((message) => (
-        <p key={message.turn_number} className="text-sm">
-          {message.content}
-        </p>
-      ))}
-      <p className="text-xs text-muted-foreground">
-        The full game screen arrives in Phase 3 - this confirms the save loaded correctly.
-      </p>
-    </div>
-  )
+  return <GameScreen saveId={saveId} />
 }
 
 const settingsRoute = createRoute({
