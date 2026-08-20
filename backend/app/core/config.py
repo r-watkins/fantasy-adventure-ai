@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     # from that directory). Docker sets this to the mounted content path
     # (e.g. /app/content) instead.
     content_dir: str = "../content"
+    # Source doc §7: proposed-action quantities must be "positive and within
+    # configured bounds". No specific number is specified anywhere upstream -
+    # provisional default, same status as Task 19's rate-limit thresholds.
+    max_item_quantity: int = 99
 
 
 @lru_cache
