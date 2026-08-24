@@ -1,4 +1,4 @@
-FROM python:3.13-slim
+FROM python:3.13-slim AS builder
 
 WORKDIR /app
 
@@ -14,6 +14,24 @@ RUN uv sync --locked --no-install-project
 COPY . .
 RUN uv sync --locked
 
+# Production stage: only the built venv + app code cross the boundary - no
+# uv binary, build cache, or apt lists. docker-compose.dev.yml instead
+# builds against the `builder` stage above (still has uv + a writable venv
+# for its own `uv sync && uv run --reload` command), so dev is unaffected.
+FROM python:3.13-slim
+
+WORKDIR /app
+
+# Non-root: the app never needs root privileges at runtime.
+RUN groupadd --system app \
+    && useradd --system --gid app --no-create-home --shell /usr/sbin/nologin app
+
+COPY --from=builder --chown=app:app /app /app
+
+USER app
+
+ENV PATH="/app/.venv/bin:$PATH"
+
 EXPOSE 8000
 
-CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

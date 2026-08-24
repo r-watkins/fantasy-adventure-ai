@@ -1,5 +1,11 @@
 services:
   api:
+    build:
+      # Task 49 hardened the production Dockerfile's final stage to a slim,
+      # non-root image with no uv binary - dev instead builds against the
+      # `builder` stage, which still has uv + a writable venv for the
+      # `uv sync && uv run --reload` command below.
+      target: builder
     volumes:
       # Bind-mount source for live reload, but keep the venv in a named
       # volume so the container's Linux-built virtualenv isn't shadowed by
