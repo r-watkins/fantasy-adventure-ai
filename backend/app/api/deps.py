@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import SESSION_COOKIE_NAME
 from app.db.session import get_db_session
 from app.game.content_schemas import GameContent
-from app.llm.mock_provider import MockNarrativeProvider
 from app.llm.provider import NarrativeProvider
 from app.models.session import UserSession
 from app.models.user import User
@@ -41,8 +40,5 @@ def get_content(request: Request) -> GameContent:
     return request.app.state.content
 
 
-def get_narrative_provider() -> NarrativeProvider:
-    # Always the mock provider for now - Task 45 replaces this with a real
-    # factory that switches on settings.llm_provider once
-    # GeminiNarrativeProvider exists (Task 41).
-    return MockNarrativeProvider()
+def get_narrative_provider(request: Request) -> NarrativeProvider:
+    return request.app.state.narrative_provider

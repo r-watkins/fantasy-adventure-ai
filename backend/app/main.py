@@ -17,6 +17,7 @@ from app.core.config import get_settings
 from app.core.rate_limit import limiter
 from app.db.session import create_engine, create_session_factory
 from app.game.content_loader import load_content
+from app.llm.factory import build_narrative_provider
 
 
 @asynccontextmanager
@@ -29,6 +30,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Fail fast: an invalid content directory should crash startup rather
     # than run with broken/missing world content.
     app.state.content = load_content(Path(settings.content_dir))
+
+    # Fail fast: LLM_PROVIDER=gemini with no GEMINI_API_KEY should crash
+    # startup, not the first turn a player submits.
+    app.state.narrative_provider = build_narrative_provider(settings)
 
     yield
 
