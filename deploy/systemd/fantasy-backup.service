@@ -1,0 +1,8 @@
+[Unit]
+Description=Fantasy AI Adventure - nightly SQLite backup
+Wants=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/fantasy-ai-adventure/deploy/lightsail/backup.sh

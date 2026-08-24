@@ -2,3 +2,9 @@
 # entrypoints) - a CRLF shebang line (`#!/usr/bin/env bash\r`) fails there.
 # Force LF regardless of the committer's platform or core.autocrlf setting.
 *.sh text eol=lf
+
+# systemd unit files have the same fragility - a stray \r gets included
+# literally in directive values (e.g. `ExecStart=/path\r` fails with "No
+# such file or directory"), and they only ever run on Linux hosts.
+*.service text eol=lf
+*.timer text eol=lf

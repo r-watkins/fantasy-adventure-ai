@@ -1,0 +1,11 @@
+[Unit]
+Description=Run fantasy-backup.service nightly
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+# Runs the missed backup on the next boot if the instance was off at 03:00 -
+# a low-traffic single instance is the exact case this matters for.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

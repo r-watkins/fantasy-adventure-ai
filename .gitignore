@@ -38,6 +38,9 @@ pnpm-debug.log*
 data/*
 !data/.gitkeep
 
+# --- deploy/lightsail/backup.sh output (real user data - never commit) ---
+/backups/
+
 # --- Secrets / env ---
 .env
 .env.*
