@@ -62,6 +62,7 @@ async def test_gemini_provider_calls_generate_content_with_expected_config() -> 
     assert "I look around the tavern." in call_kwargs["contents"]
     assert call_kwargs["config"].response_mime_type == "application/json"
     assert call_kwargs["config"].response_schema is TurnResult
+    assert call_kwargs["config"].system_instruction == _request().content.narrator_system_prompt
 
 
 async def test_gemini_provider_raises_when_response_has_no_parsed_result() -> None:

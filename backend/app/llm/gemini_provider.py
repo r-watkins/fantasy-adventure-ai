@@ -1,6 +1,7 @@
 from google import genai
 from google.genai import types
 
+from app.llm.prompt import assemble_turn_prompt
 from app.llm.schemas import NarrativeTurnRequest, TurnResult
 
 
@@ -14,10 +15,12 @@ class GeminiNarrativeProvider:
         self._model = model
 
     async def generate_turn(self, request: NarrativeTurnRequest) -> TurnResult:
+        prompt = assemble_turn_prompt(request)
         response = await self._client.aio.models.generate_content(
             model=self._model,
-            contents=_build_turn_prompt(request),
+            contents=prompt.contents,
             config=types.GenerateContentConfig(
+                system_instruction=prompt.system_instruction,
                 response_mime_type="application/json",
                 response_schema=TurnResult,
             ),
@@ -27,12 +30,3 @@ class GeminiNarrativeProvider:
                 "Gemini response contained no parsable structured output"
             )
         return response.parsed
-
-
-def _build_turn_prompt(request: NarrativeTurnRequest) -> str:
-    # Minimal placeholder prompt - Task 42 replaces this with the real prompt
-    # assembly function (system_instruction from narrator_system.md +
-    # delimited world/state/summary/recent-context blocks). Needed now only
-    # so this provider has something concrete to send.
-    state_json = request.game_state.model_dump_json()
-    return f"Current game state (JSON):\n{state_json}\n\nPlayer action:\n{request.player_message}"
