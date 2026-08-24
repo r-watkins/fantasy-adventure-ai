@@ -2,7 +2,9 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
+import httpx
 import pytest
+from google.genai import errors
 
 from app.core.config import Settings
 from app.game.content_loader import load_content
@@ -86,3 +88,46 @@ async def test_gemini_provider_raises_when_response_has_no_parsed_result() -> No
 
     with pytest.raises(GeminiTurnGenerationError):
         await provider.generate_turn(_request())
+
+
+def test_gemini_provider_configures_a_timeout_of_at_least_120_seconds() -> None:
+    provider = _provider()
+
+    http_options = provider._client._api_client._http_options
+    assert http_options.timeout is not None
+    assert http_options.timeout >= 120_000
+
+
+def test_gemini_provider_opts_into_retry_on_429_and_5xx() -> None:
+    # Without explicit retry_options, google-genai does not retry at all
+    # (retry_args() returns stop_after_attempt(1) when retry_options is
+    # None) - assert the provider actually opts in, not just that some
+    # value is set.
+    provider = _provider()
+
+    retry_options = provider._client._api_client._http_options.retry_options
+    assert retry_options is not None
+
+
+async def test_gemini_provider_wraps_api_error_in_sanitized_exception() -> None:
+    provider = _provider()
+    raw_error = errors.ClientError(code=403, response_json={"error": {"message": "leaked detail"}})
+    provider._client.aio.models.generate_content = AsyncMock(side_effect=raw_error)
+
+    with pytest.raises(GeminiTurnGenerationError) as exc_info:
+        await provider.generate_turn(_request())
+
+    assert "leaked detail" not in str(exc_info.value)
+    assert exc_info.value.__cause__ is raw_error
+
+
+async def test_gemini_provider_wraps_transient_network_errors_in_sanitized_exception() -> None:
+    provider = _provider()
+    provider._client.aio.models.generate_content = AsyncMock(
+        side_effect=httpx.ConnectError("connection refused to 1.2.3.4:443")
+    )
+
+    with pytest.raises(GeminiTurnGenerationError) as exc_info:
+        await provider.generate_turn(_request())
+
+    assert "1.2.3.4" not in str(exc_info.value)

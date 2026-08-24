@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_content, get_current_user, get_narrative_provider
 from app.db.session import get_db_session
 from app.game.content_schemas import GameContent
+from app.llm.gemini_provider import GeminiTurnGenerationError
 from app.llm.provider import NarrativeProvider
 from app.models.user import User
 from app.schemas.turns import SubmitTurnRequest, TurnResponse
@@ -39,6 +40,16 @@ async def submit_turn_endpoint(
         # description of what was wrong (e.g. "Unknown item_id 'x'"), not
         # provider text, so it's safe to log verbatim.
         logger.warning("Turn action validation failed for save %s: %s", save_id, exc.message)
+        raise HTTPException(
+            status.HTTP_502_BAD_GATEWAY,
+            detail="The narrator's response could not be processed. Please try again.",
+        ) from exc
+    except GeminiTurnGenerationError as exc:
+        # str(exc) is always our own sanitized, generic description (see
+        # GeminiTurnGenerationError's docstring) - never the raw provider
+        # response, so it's safe to log verbatim. Zero state mutation:
+        # submit_turn raises this before any db.add/save mutation happens.
+        logger.warning("Turn narrative generation failed for save %s: %s", save_id, exc)
         raise HTTPException(
             status.HTTP_502_BAD_GATEWAY,
             detail="The narrator's response could not be processed. Please try again.",
