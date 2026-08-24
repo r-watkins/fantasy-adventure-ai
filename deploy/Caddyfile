@@ -12,6 +12,22 @@
 {$SITE_ADDRESS:localhost} {
 	encode zstd gzip
 
+	# Task 55 security hardening pass. Applied globally (both the API proxy
+	# and the frontend) since HSTS/nosniff are meaningful for JSON responses
+	# too, not just HTML. Content-Security-Policy is deliberately omitted -
+	# the frontend has an inline pre-paint theme script (Task 8) that would
+	# need a nonce/hash to survive a strict CSP, and there's no build step
+	# to keep a hash in sync automatically if that script is ever edited -
+	# user confirmed deferring CSP as a follow-up rather than shipping a
+	# fragile or overly-permissive policy now.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "geolocation=(), camera=(), microphone=()"
+	}
+
 	# Must come before the catch-all `handle` block below: `handle` blocks are
 	# mutually exclusive and evaluated in the order they're written, so a
 	# request matching /api/* would otherwise also match the catch-all first.

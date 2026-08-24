@@ -1,9 +1,10 @@
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_content, get_current_user, get_narrative_provider
+from app.core.rate_limit import limiter
 from app.db.session import get_db_session
 from app.game.content_schemas import GameContent
 from app.llm.gemini_provider import GeminiTurnGenerationError
@@ -20,7 +21,9 @@ router = APIRouter(prefix="/saves", tags=["turns"])
 
 
 @router.post("/{save_id}/turns", response_model=TurnResponse)
+@limiter.limit("20/minute")
 async def submit_turn_endpoint(
+    request: Request,
     save_id: str,
     body: SubmitTurnRequest,
     user: User = Depends(get_current_user),
