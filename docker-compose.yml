@@ -12,12 +12,37 @@ services:
     volumes:
       - sqlite_data:/data
       - ./content:/app/content:ro
+    # No host port mapping - the `web` service (Caddy) fronts the API now,
+    # reverse-proxying /api/* to this container by its service name over the
+    # compose network. Not reachable directly from the host.
+    restart: unless-stopped
+
+  web:
+    # Only started for `docker compose --profile production up` (or
+    # COMPOSE_PROFILES=production) - local dev never runs Caddy (Task 9's
+    # decision) and instead layers docker-compose.dev.yml on top of this
+    # same base file, which would otherwise also bring `web` up alongside
+    # dev's own Vite-based `frontend` service for no reason. Task 52's
+    # Lightsail bootstrap script and Task 54's deployment README are the
+    # ones that actually invoke the production profile.
+    profiles:
+      - production
+    build:
+      context: ./frontend
+    env_file:
+      - .env
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
     ports:
-      # Exposed directly for now since there is no reverse proxy in front of
-      # the API yet. Phase 5 adds a Caddy `web` service and removes this
-      # direct host port mapping.
-      - "8000:8000"
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - api
     restart: unless-stopped
 
 volumes:
   sqlite_data:
+  caddy_data:
+  caddy_config:

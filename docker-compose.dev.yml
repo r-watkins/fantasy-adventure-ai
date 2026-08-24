@@ -13,6 +13,12 @@ services:
       - ./backend:/app
       - backend_venv:/app/.venv
     command: sh -c "uv sync --locked && uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    ports:
+      # Task 50 removed this from the base file (Caddy fronts the api in
+      # production, so it's no longer reachable directly from the host) -
+      # dev doesn't run Caddy at all (see Task 9's decision), so restore
+      # direct host access here for the documented localhost:8000 workflow.
+      - "8000:8000"
 
   frontend:
     image: node:24-slim
