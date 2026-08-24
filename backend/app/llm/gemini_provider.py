@@ -10,9 +10,12 @@ class GeminiTurnGenerationError(Exception):
 
 
 class GeminiNarrativeProvider:
-    def __init__(self, api_key: str, model: str) -> None:
+    def __init__(
+        self, api_key: str, model: str, safety_settings: list[types.SafetySetting]
+    ) -> None:
         self._client = genai.Client(api_key=api_key)
         self._model = model
+        self._safety_settings = safety_settings
 
     async def generate_turn(self, request: NarrativeTurnRequest) -> TurnResult:
         prompt = assemble_turn_prompt(request)
@@ -23,6 +26,7 @@ class GeminiNarrativeProvider:
                 system_instruction=prompt.system_instruction,
                 response_mime_type="application/json",
                 response_schema=TurnResult,
+                safety_settings=self._safety_settings,
             ),
         )
         if response.parsed is None:

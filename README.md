@@ -73,6 +73,9 @@ All variables live in `.env` (copied from `.env.example`, gitignored). Docker Co
 | `LLM_PROVIDER` | `mock` | `mock` (deterministic, offline) \| `gemini` (real API calls, requires `GEMINI_API_KEY`). |
 | `GEMINI_API_KEY` | *(empty)* | Required only when `LLM_PROVIDER=gemini`. |
 | `GEMINI_MODEL` | `gemini-2.5-flash-lite` | Gemini model ID. |
+| `GEMINI_SAFETY_DANGEROUS_CONTENT` | `BLOCK_ONLY_HIGH` | Safety threshold for dangerous-content generation. One of `BLOCK_NONE` \| `BLOCK_ONLY_HIGH` \| `BLOCK_MEDIUM_AND_ABOVE` \| `BLOCK_LOW_AND_ABOVE` \| `OFF`. |
+| `GEMINI_SAFETY_HARASSMENT` | `BLOCK_ONLY_HIGH` | Safety threshold for harassment content. Same value set as above. |
+| `GEMINI_SAFETY_SEXUALLY_EXPLICIT` | `BLOCK_MEDIUM_AND_ABOVE` | Safety threshold for sexually explicit content. Same value set as above. |
 | `SITE_ADDRESS` | `localhost` | Production-only: the domain Caddy serves and obtains HTTPS for (`deploy/Caddyfile`). Not used in local dev. |
 
 ## Stack

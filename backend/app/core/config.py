@@ -3,6 +3,16 @@ from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Mirrors google.genai.types.HarmBlockThreshold's practical values (excludes
+# the UNSPECIFIED sentinel, which isn't meant to be set explicitly).
+HarmBlockThresholdName = Literal[
+    "BLOCK_NONE",
+    "BLOCK_ONLY_HIGH",
+    "BLOCK_MEDIUM_AND_ABOVE",
+    "BLOCK_LOW_AND_ABOVE",
+    "OFF",
+]
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
@@ -12,6 +22,13 @@ class Settings(BaseSettings):
     llm_provider: Literal["mock", "gemini"] = "mock"
     gemini_api_key: str = ""
     gemini_model: str = "gemini-2.5-flash-lite"
+    # Starting-point safety thresholds for "dangerous but not graphic gore"
+    # fantasy content (source doc's stated tone) - env-overridable so Task
+    # 47's canary pass can tune them against real transcripts without a code
+    # change. Threshold names match google.genai.types.HarmBlockThreshold.
+    gemini_safety_dangerous_content: HarmBlockThresholdName = "BLOCK_ONLY_HIGH"
+    gemini_safety_harassment: HarmBlockThresholdName = "BLOCK_ONLY_HIGH"
+    gemini_safety_sexually_explicit: HarmBlockThresholdName = "BLOCK_MEDIUM_AND_ABOVE"
     # Default assumes the app runs with cwd=backend/ (e.g. `uv run uvicorn ...`
     # from that directory). Docker sets this to the mounted content path
     # (e.g. /app/content) instead.
