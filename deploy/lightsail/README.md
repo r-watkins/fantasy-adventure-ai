@@ -123,12 +123,22 @@ after the first `up`:
 
 ```bash
 cd /opt/fantasy-ai-adventure
-docker compose exec api /app/.venv/bin/alembic upgrade head
+docker compose exec --user app api /app/.venv/bin/alembic upgrade head
 ```
 
-(Not `uv run alembic ...` - the production image is hardened and doesn't
-include `uv`; the venv's own `alembic` is already on `PATH` inside the
-container.)
+Two things about this command, both found by actually running it:
+
+- Not `uv run alembic ...` - the production image is hardened and doesn't
+  include `uv`; the venv's own `alembic` is already on `PATH` inside the
+  container.
+- `--user app` matters: `docker compose exec` defaults to root (the image
+  has no `USER` directive - see entrypoint.sh below), and a command run
+  that way would create `game.db` as root-owned. The container's actual
+  process runs as the unprivileged `app` user, which then can't write to a
+  file root just created - migrations would appear to succeed but every
+  subsequent request would fail with "attempt to write a readonly
+  database". Always pass `--user app` for any one-off command that touches
+  the database.
 
 At this point the site should be live at `https://<your-domain>`.
 
@@ -180,13 +190,13 @@ docker run --rm -v "$(pwd)/$BACKUP_FILE:/backup.db:ro" fantasy-ai-adventure-api 
 # Expect: ('ok',)
 
 # 2. Throwaway app run - actually boot the app against the restored file,
-#    proving it's not just structurally valid but genuinely usable.
-#    --user root: the production image runs as a non-root user (Task 49),
-#    which won't have write access to a freshly-copied file it doesn't own
-#    - root sidesteps that for this one-off diagnostic container.
+#    proving it's not just structurally valid but genuinely usable. No
+#    --user override needed: entrypoint.sh always chowns /data to the
+#    unprivileged app user at container start, regardless of who owned the
+#    files beforehand.
 mkdir -p /tmp/restore-test
 cp "$BACKUP_FILE" /tmp/restore-test/game.db
-docker run --rm -d --name restore-test --user root \
+docker run --rm -d --name restore-test \
   -v /tmp/restore-test:/data \
   -v "$(pwd)/content:/app/content:ro" \
   -e DATABASE_URL="sqlite+aiosqlite:////data/game.db" \

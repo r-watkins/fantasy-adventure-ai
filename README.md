@@ -6,7 +6,7 @@ The narrator is an LLM assistant; game state (accounts, saves, inventory, world 
 
 ## Status
 
-Early development — following an implementation checklist phase by phase. Accounts, the game loop, real LLM integration, and production deployment are not built yet.
+Feature-complete for v1: accounts and saves, the full game loop against a real Gemini narrator (with an offline mock-provider fallback for local dev), and a documented production deployment path to a single AWS Lightsail instance. See [deploy/lightsail/README.md](deploy/lightsail/README.md) to deploy.
 
 ## Local development
 
@@ -28,7 +28,7 @@ By default `LLM_PROVIDER=mock`, so the app runs fully offline with no external A
 
 SQLite data persists in a named Docker volume (`sqlite_data`) across restarts. To reset it entirely: `docker compose down -v`.
 
-A seed command that creates a test user and sample save for local development is planned but not implemented yet — it depends on the accounts/saves work in a later phase.
+A seed command that creates a test user and sample save for local development is a nice-to-have, not yet built.
 
 ### Running without Docker
 
@@ -60,6 +60,10 @@ cd frontend
 npm run test
 npm run lint
 npx tsc -b
+
+# Frontend end-to-end (Playwright - spins up its own isolated backend
+# and dev server, doesn't need Docker or a running dev stack)
+npm run test:e2e
 ```
 
 ### Environment variables
@@ -77,6 +81,19 @@ All variables live in `.env` (copied from `.env.example`, gitignored). Docker Co
 | `GEMINI_SAFETY_HARASSMENT` | `BLOCK_ONLY_HIGH` | Safety threshold for harassment content. Same value set as above. |
 | `GEMINI_SAFETY_SEXUALLY_EXPLICIT` | `BLOCK_MEDIUM_AND_ABOVE` | Safety threshold for sexually explicit content. Same value set as above. |
 | `SITE_ADDRESS` | `localhost` | Production-only: the domain Caddy serves and obtains HTTPS for (`deploy/Caddyfile`). Not used in local dev. |
+| `CONTENT_DIR` | `../content` | Path to the world/items/NPCs/origins YAML content. Overridden to a container-internal path by Docker Compose regardless of `.env` (see above). |
+| `MAX_ITEM_QUANTITY` | `99` | Upper bound the server enforces on any LLM-proposed item quantity (`add_item`/`remove_item`). Provisional - no specific number is mandated anywhere upstream. |
+| `RECENT_CONTEXT_WINDOW` | `10` | Number of recent player/narrator messages kept in the rolling context sent to the LLM each turn. Larger values improve narrative continuity at the cost of more tokens per Gemini call. |
+
+## Production deployment
+
+```bash
+docker compose --profile production up -d --build
+```
+
+The `--profile production` flag matters — it's what starts the Caddy `web` service (reverse proxy + automatic HTTPS) alongside `api`. Without it, only `api` starts, which is what local dev overlays use instead (`docker-compose.dev.yml` never runs Caddy).
+
+This assumes `.env` is already configured with a real `GEMINI_API_KEY` and a `SITE_ADDRESS` that resolves to the host. For the complete walkthrough — provisioning a fresh AWS Lightsail instance, DNS, firewall rules, running migrations, nightly backups, and testing backup restoration — see **[deploy/lightsail/README.md](deploy/lightsail/README.md)**.
 
 ## Stack
 

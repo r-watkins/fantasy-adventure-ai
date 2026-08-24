@@ -22,16 +22,19 @@ FROM python:3.13-slim
 
 WORKDIR /app
 
-# Non-root: the app never needs root privileges at runtime.
+# Non-root: the app never needs root privileges once running. The
+# container still starts as root (no USER directive here) so entrypoint.sh
+# can fix ownership of the mounted /data volume before dropping to this
+# user - see that script for why.
 RUN groupadd --system app \
     && useradd --system --gid app --no-create-home --shell /usr/sbin/nologin app
 
 COPY --from=builder --chown=app:app /app /app
-
-USER app
+COPY --chmod=755 entrypoint.sh /entrypoint.sh
 
 ENV PATH="/app/.venv/bin:$PATH"
 
 EXPOSE 8000
 
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
