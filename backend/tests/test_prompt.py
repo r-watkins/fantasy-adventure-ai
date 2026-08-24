@@ -113,6 +113,23 @@ def test_current_state_block_lists_known_locations_for_move_player(
         assert location.id in state_block
 
 
+def test_current_state_block_lists_known_items_for_add_item(
+    request_for_tavern_cook: NarrativeTurnRequest,
+) -> None:
+    # Found live during manual testing after Task 47: inventory only lists
+    # items the player already has, so add_item (granting something new)
+    # had no valid item_id to reference - the model invented a
+    # non-existent "withered_stalks" item_id, rejected by validation the
+    # same way the bad location_id was.
+    prompt = assemble_turn_prompt(request_for_tavern_cook)
+    content = request_for_tavern_cook.content
+
+    state_block = prompt.contents.split("<current_state>")[1].split("</current_state>")[0]
+    assert len(content.items.items) > 1, "fixture content should have >1 item to be meaningful"
+    for item in content.items.items:
+        assert item.id in state_block
+
+
 def test_current_state_block_resolves_location_and_inventory_item_names(
     request_for_tavern_cook: NarrativeTurnRequest,
 ) -> None:

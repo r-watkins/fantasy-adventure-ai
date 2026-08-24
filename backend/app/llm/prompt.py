@@ -99,6 +99,15 @@ def _current_state_block(state: GameState, content: GameContent) -> str:
         or "(empty)"
     )
 
+    # Same reasoning as known_location_lines above: inventory only lists
+    # items the player already has, so add_item (granting something new)
+    # has no valid item_id to reference without this - found live, same
+    # session: the model invented a non-existent "withered_stalks" item_id,
+    # rejected by validation the same way the bad location_id was.
+    known_item_lines = (
+        "\n".join(f"- {item.id}: {item.name}" for item in content.items.items) or "(none)"
+    )
+
     character_lines = (
         "\n".join(
             f"- {character_id}: relationship={info.relationship}, "
@@ -127,6 +136,8 @@ def _current_state_block(state: GameState, content: GameContent) -> str:
         f"Location: {location_desc}\n"
         f"Known locations (valid move_player location_id values):\n{known_location_lines}\n"
         f"Inventory:\n{inventory_lines}\n"
+        f"Known items (valid item_id values for add_item/remove_item/equip_item/"
+        f"unequip_item):\n{known_item_lines}\n"
         f"Characters:\n{character_lines}\n"
         f"World flags:\n{flag_lines}\n"
         f"Quests:\n{quest_lines}\n"
