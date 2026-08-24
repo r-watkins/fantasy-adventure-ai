@@ -74,11 +74,16 @@ export function OriginSelect({ onCreated, onBack }: OriginSelectProps) {
           {originsQuery.data.map((origin) => {
             const isSelected = selectedOriginId === origin.id
             return (
+              // WAI-ARIA APG's button-based radiogroup pattern (same reasoning
+              // as SettingsScreen.tsx's theme picker) - a native
+              // <input type="radio"> can't carry this card-styled layout.
               <button
                 key={origin.id}
                 type="button"
+                // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
                 role="radio"
                 aria-checked={isSelected}
+                aria-label={origin.name}
                 onClick={() => setSelectedOriginId(origin.id)}
                 className="text-left"
               >

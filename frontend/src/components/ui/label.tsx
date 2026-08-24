@@ -4,6 +4,10 @@ import { cn } from "@/lib/utils"
 
 function Label({ className, ...props }: React.ComponentProps<"label">) {
   return (
+    // Generic reusable primitive - every call site supplies htmlFor for a
+    // single-control label, or id+aria-labelledby when labeling a group
+    // instead (see SettingsScreen.tsx's theme radiogroup).
+    // oxlint-disable-next-line jsx-a11y/label-has-associated-control
     <label
       data-slot="label"
       className={cn(

@@ -2,13 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 
 import { type Theme, useTheme } from '@/components/theme-provider'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { logoutRequest } from '@/features/auth/api'
 import { describeApiError } from '@/lib/api-client'
@@ -52,7 +46,11 @@ export function SettingsScreen({ onLoggedOut }: SettingsScreenProps) {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Settings</CardTitle>
+        {/* CardTitle renders a <div>, not a heading - every other screen has
+            its own <h1>, but this one didn't (found live via axe-core's
+            page-has-heading-one rule, Task 56). Same visual style as
+            CardTitle, just a real heading element. */}
+        <h1 className="font-heading text-base leading-snug font-medium">Settings</h1>
         <CardDescription>Appearance and account.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
@@ -60,10 +58,15 @@ export function SettingsScreen({ onLoggedOut }: SettingsScreenProps) {
           <Label id="theme-label">Theme</Label>
           <div className="flex gap-2" role="radiogroup" aria-labelledby="theme-label">
             {THEME_OPTIONS.map((option) => (
+              // WAI-ARIA APG's button-based radiogroup pattern, not an accident:
+              // a native <input type="radio"> can't carry this segmented-button
+              // styling. A real <button> (not a bare div) keeps it natively
+              // focusable and Enter/Space-activatable with no extra keydown code.
               <Button
                 key={option.value}
                 type="button"
                 variant={theme === option.value ? 'default' : 'outline'}
+                // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
                 role="radio"
                 aria-checked={theme === option.value}
                 onClick={() => handleThemeChange(option.value)}
