@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -27,7 +28,7 @@ def tavern_cook_state(content):
 
 
 def _action(action_type: str, **payload) -> ProposedAction:
-    return ProposedAction(action_type=action_type, payload=payload)
+    return ProposedAction(action_type=action_type, payload=json.dumps(payload))
 
 
 # --- add_item -----------------------------------------------------------
@@ -231,9 +232,7 @@ def test_set_character_relationship_then_status_preserves_memory(content, tavern
         content,
         [
             _action("set_character_memory", character_id="mira_veyl", memory="Found the seal."),
-            _action(
-                "set_character_relationship", character_id="mira_veyl", relationship="ally"
-            ),
+            _action("set_character_relationship", character_id="mira_veyl", relationship="ally"),
             _action("set_character_status", character_id="mira_veyl", status="waiting"),
         ],
     )
@@ -248,8 +247,11 @@ def test_set_character_relationship_then_status_preserves_memory(content, tavern
     "action_type", ["set_character_memory", "set_character_relationship", "set_character_status"]
 )
 def test_character_actions_reject_unknown_npc(content, tavern_cook_state, action_type):
-    field = {"set_character_memory": "memory", "set_character_relationship": "relationship",
-             "set_character_status": "status"}[action_type]
+    field = {
+        "set_character_memory": "memory",
+        "set_character_relationship": "relationship",
+        "set_character_status": "status",
+    }[action_type]
     with pytest.raises(ActionValidationError, match="Unknown character_id"):
         validate_and_apply_actions(
             tavern_cook_state,
@@ -314,11 +316,7 @@ def test_update_quest_rejects_unknown_status(content, tavern_cook_state):
         validate_and_apply_actions(
             tavern_cook_state,
             content,
-            [
-                _action(
-                    "update_quest", quest_id="missing_ledger", status="on_hold", objective="Go."
-                )
-            ],
+            [_action("update_quest", quest_id="missing_ledger", status="on_hold", objective="Go.")],
         )
 
 
@@ -338,6 +336,26 @@ def test_move_player_rejects_unknown_location(content, tavern_cook_state):
         validate_and_apply_actions(
             tavern_cook_state, content, [_action("move_player", location_id="nonexistent")]
         )
+
+
+# --- payload JSON parsing -------------------------------------------------------
+# payload is a JSON-encoded string, not a dict (Task 47 finding: a dict-typed
+# field renders as additionalProperties in the response schema, rejected by
+# the Gemini Developer API) - these cover the json.loads() step directly.
+
+
+def test_payload_that_is_not_valid_json_is_rejected(content, tavern_cook_state):
+    action = ProposedAction(action_type="equip_item", payload="Iron Cook Knife")
+
+    with pytest.raises(ActionValidationError, match="not valid JSON"):
+        validate_and_apply_actions(tavern_cook_state, content, [action])
+
+
+def test_payload_that_is_a_json_array_not_object_is_rejected(content, tavern_cook_state):
+    action = ProposedAction(action_type="equip_item", payload="[1, 2, 3]")
+
+    with pytest.raises(ActionValidationError, match="must be a JSON object"):
+        validate_and_apply_actions(tavern_cook_state, content, [action])
 
 
 # --- allowlist / zero-mutation guarantees ---------------------------------------

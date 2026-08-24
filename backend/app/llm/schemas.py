@@ -1,4 +1,4 @@
-from typing import Any, Literal
+from typing import Literal
 
 from pydantic import BaseModel
 
@@ -25,7 +25,13 @@ ActionType = Literal[
 
 class ProposedAction(BaseModel):
     action_type: ActionType
-    payload: dict[str, Any] = {}
+    # JSON-encoded object, not a dict[str, Any] - found at Task 47's canary
+    # test: a dict-typed field renders as a JSON schema with
+    # additionalProperties, which the Gemini Developer API (api-key auth,
+    # used here) rejects client-side for response_schema. Parsed with
+    # json.loads() in action_validation_service.py; malformed JSON is
+    # treated as a rejected/malformed action, same as any other bad payload.
+    payload: str = "{}"
 
 
 class TurnResult(BaseModel):

@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -74,9 +75,7 @@ async def test_second_turn_increments_and_does_not_regrant(client: AsyncClient) 
     save_id = await _register_and_create_save(client, "secondturn@example.com", "wheat_farmer")
 
     await client.post(f"/api/saves/{save_id}/turns", json={"message": "First."})
-    second_response = await client.post(
-        f"/api/saves/{save_id}/turns", json={"message": "Second."}
-    )
+    second_response = await client.post(f"/api/saves/{save_id}/turns", json={"message": "Second."})
 
     body = second_response.json()
     assert body["turn_number"] == 2
@@ -129,7 +128,9 @@ class _RejectingProvider:
             narrative="...",
             summary_update="...",
             proposed_actions=[
-                ProposedAction(action_type="add_item", payload={"item_id": "nonexistent"})
+                ProposedAction(
+                    action_type="add_item", payload=json.dumps({"item_id": "nonexistent"})
+                )
             ],
         )
 
@@ -144,9 +145,7 @@ async def test_submit_turn_rejects_invalid_action_with_zero_mutation(
     async with LifespanManager(app):
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as client:
-            save_id = await _register_and_create_save(
-                client, "rejected@example.com", "tavern_cook"
-            )
+            save_id = await _register_and_create_save(client, "rejected@example.com", "tavern_cook")
 
             response = await client.post(
                 f"/api/saves/{save_id}/turns", json={"message": "I try something impossible."}

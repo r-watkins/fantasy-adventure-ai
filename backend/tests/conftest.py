@@ -1,4 +1,4 @@
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Iterator
 from pathlib import Path
 
 import pytest
@@ -26,6 +26,25 @@ def _reset_rate_limiter() -> None:
     # otherwise leak across tests/test files that all hit the same
     # rate-limited endpoints from the same apparent client IP.
     limiter.reset()
+
+
+@pytest.fixture(autouse=True)
+def _no_real_dotenv_in_tests(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
+    # A developer's own backend/.env (e.g. for the Task 47 Gemini canary
+    # test) must never leak into the test suite - found live: with a real
+    # .env setting LLM_PROVIDER=gemini, every test constructing Settings(...)
+    # directly (not through get_settings()) silently picked that up instead
+    # of the code-level "mock" default, since pydantic-settings reads
+    # env_file at each Settings() instantiation regardless of which fields
+    # the caller explicitly passes. Tests must be hermetic to local dev
+    # environment files - patch env_file off globally for the whole suite.
+    # get_settings() is also process-wide lru_cache'd, so clear it too - a
+    # previous test may have already cached a Settings() built from the
+    # real .env before this fixture's patch took effect.
+    monkeypatch.setitem(Settings.model_config, "env_file", None)
+    get_settings.cache_clear()
+    yield
+    get_settings.cache_clear()
 
 
 def _alembic_config(database_url: str) -> Config:

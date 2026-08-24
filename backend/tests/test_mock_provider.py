@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -14,9 +15,7 @@ pytestmark = pytest.mark.anyio
 REPO_CONTENT_DIR = Path(__file__).resolve().parents[2] / "content"
 
 
-def _request_at_turn(
-    origin_id: str, turn_number: int, player_message: str
-) -> NarrativeTurnRequest:
+def _request_at_turn(origin_id: str, turn_number: int, player_message: str) -> NarrativeTurnRequest:
     content = load_content(REPO_CONTENT_DIR)
     origin = next(o for o in content.origins.origins if o.id == origin_id)
     state = GameState.model_validate(build_starting_game_state(origin, "Avery"))
@@ -71,8 +70,9 @@ async def test_mock_provider_grants_an_unheld_item_on_first_turn() -> None:
     assert len(result.proposed_actions) == 1
     action = result.proposed_actions[0]
     assert action.action_type == "add_item"
-    assert action.payload["item_id"] not in held_item_ids
-    assert action.payload["quantity"] == 1
+    payload = json.loads(action.payload)
+    assert payload["item_id"] not in held_item_ids
+    assert payload["quantity"] == 1
 
 
 async def test_mock_provider_proposes_no_actions_after_first_turn() -> None:

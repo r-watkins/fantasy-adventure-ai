@@ -21,7 +21,12 @@ class Settings(BaseSettings):
     database_url: str = "sqlite+aiosqlite:///./data/game.db"
     llm_provider: Literal["mock", "gemini"] = "mock"
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-2.5-flash-lite"
+    # gemini-2.5-flash-lite (research.md's original pin) is no longer
+    # available to new API keys as of Task 47's canary test (2026-08-24) -
+    # Google's own 404 response for it names gemini-3.5-flash-lite as the
+    # replacement. See implementation-log.md Task 47 for the live-tested
+    # findings behind this default.
+    gemini_model: str = "gemini-3.5-flash-lite"
     # Starting-point safety thresholds for "dangerous but not graphic gore"
     # fantasy content (source doc's stated tone) - env-overridable so Task
     # 47's canary pass can tune them against real transcripts without a code

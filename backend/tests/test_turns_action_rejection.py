@@ -6,6 +6,7 @@ level - this file proves the same rejections hold end-to-end through
 POST /api/saves/{save_id}/turns, each with zero state mutation asserted.
 """
 
+import json
 from pathlib import Path
 
 import pytest
@@ -22,12 +23,14 @@ pytestmark = pytest.mark.anyio
 REPO_CONTENT_DIR = Path(__file__).resolve().parents[2] / "content"
 
 
+def _payload(**kwargs: object) -> str:
+    return json.dumps(kwargs)
+
+
 def _provider_returning(*actions: ProposedAction):
     class _FixedProvider:
         async def generate_turn(self, request: NarrativeTurnRequest) -> TurnResult:
-            return TurnResult(
-                narrative="...", summary_update="...", proposed_actions=list(actions)
-            )
+            return TurnResult(narrative="...", summary_update="...", proposed_actions=list(actions))
 
     return _FixedProvider()
 
@@ -73,7 +76,7 @@ async def _run_rejected_turn_scenario(
 async def test_turn_rejects_invalid_item_id(migrated_db_url: str) -> None:
     provider = _provider_returning(
         ProposedAction(
-            action_type="add_item", payload={"item_id": "not_a_real_item", "quantity": 1}
+            action_type="add_item", payload=_payload(item_id="not_a_real_item", quantity=1)
         )
     )
     await _run_rejected_turn_scenario(migrated_db_url, provider)
@@ -81,7 +84,7 @@ async def test_turn_rejects_invalid_item_id(migrated_db_url: str) -> None:
 
 async def test_turn_rejects_negative_quantity(migrated_db_url: str) -> None:
     provider = _provider_returning(
-        ProposedAction(action_type="add_item", payload={"item_id": "ember_charm", "quantity": -1})
+        ProposedAction(action_type="add_item", payload=_payload(item_id="ember_charm", quantity=-1))
     )
     await _run_rejected_turn_scenario(migrated_db_url, provider)
 
@@ -91,14 +94,16 @@ async def test_turn_rejects_unauthorized_consume_action(migrated_db_url: str) ->
     # an item the player never owns is exactly the "unauthorized consume"
     # case source doc §13 calls out.
     provider = _provider_returning(
-        ProposedAction(action_type="remove_item", payload={"item_id": "ember_charm", "quantity": 1})
+        ProposedAction(
+            action_type="remove_item", payload=_payload(item_id="ember_charm", quantity=1)
+        )
     )
     await _run_rejected_turn_scenario(migrated_db_url, provider)
 
 
 async def test_turn_rejects_unauthorized_equip_action(migrated_db_url: str) -> None:
     provider = _provider_returning(
-        ProposedAction(action_type="equip_item", payload={"item_id": "ember_charm"})
+        ProposedAction(action_type="equip_item", payload=_payload(item_id="ember_charm"))
     )
     await _run_rejected_turn_scenario(migrated_db_url, provider)
 
@@ -107,7 +112,21 @@ async def test_turn_rejects_malformed_action_missing_required_field(migrated_db_
     # "malformed" at this layer: the action parses fine as a ProposedAction
     # (action_type is a valid Literal) but its payload is missing a field
     # the applier requires - item_id here.
-    provider = _provider_returning(ProposedAction(action_type="add_item", payload={"quantity": 1}))
+    provider = _provider_returning(
+        ProposedAction(action_type="add_item", payload=_payload(quantity=1))
+    )
+    await _run_rejected_turn_scenario(migrated_db_url, provider)
+
+
+async def test_turn_rejects_action_with_payload_that_is_not_valid_json(
+    migrated_db_url: str,
+) -> None:
+    # Task 47's live canary test found the model sometimes fills payload
+    # with a bare string instead of JSON (e.g. "Iron Cook Knife") - this is
+    # the direct endpoint-level regression test for that exact failure mode.
+    provider = _provider_returning(
+        ProposedAction(action_type="equip_item", payload="Iron Cook Knife")
+    )
     await _run_rejected_turn_scenario(migrated_db_url, provider)
 
 
@@ -115,10 +134,12 @@ async def test_turn_rejects_when_one_of_several_actions_is_invalid(migrated_db_u
     # A batch of actions where only the last is bad must still roll back the
     # earlier, individually-valid ones - the all-or-nothing guarantee.
     provider = _provider_returning(
-        ProposedAction(action_type="add_item", payload={"item_id": "ember_charm", "quantity": 1}),
+        ProposedAction(action_type="add_item", payload=_payload(item_id="ember_charm", quantity=1)),
         ProposedAction(
-            action_type="set_world_flag", payload={"flag": "east_gate_open", "value": True}
+            action_type="set_world_flag", payload=_payload(flag="east_gate_open", value=True)
         ),
-        ProposedAction(action_type="move_player", payload={"location_id": "nonexistent_location"}),
+        ProposedAction(
+            action_type="move_player", payload=_payload(location_id="nonexistent_location")
+        ),
     )
     await _run_rejected_turn_scenario(migrated_db_url, provider)

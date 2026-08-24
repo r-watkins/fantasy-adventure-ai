@@ -13,6 +13,7 @@ class AssembledPrompt(NamedTuple):
 def assemble_turn_prompt(request: NarrativeTurnRequest) -> AssembledPrompt:
     blocks = [
         _world_lore_block(request.content),
+        _action_schema_block(),
         _current_state_block(request.game_state, request.content),
         _story_summary_block(request.game_state),
         _recent_messages_block(request.game_state),
@@ -22,6 +23,40 @@ def assemble_turn_prompt(request: NarrativeTurnRequest) -> AssembledPrompt:
         system_instruction=request.content.narrator_system_prompt,
         contents="\n\n".join(blocks),
     )
+
+
+# ProposedAction.payload is a JSON-encoded string, not a structured object
+# (Task 47's canary finding: a dict-typed field renders as `additionalProperties`
+# in the response schema, which the Gemini Developer API rejects outright). The
+# schema alone gives the model no hint what keys belong in that string per
+# action_type, so without this block the model guesses (observed: writing a bare
+# item name instead of JSON) and the action gets rejected by validation. This is
+# static, per-request-independent instructional content, grouped with world_lore.
+_ACTION_SCHEMA_BLOCK = (
+    "<action_schema>\n"
+    "Each proposed_actions entry has an action_type and a payload field. payload "
+    'must be a JSON-encoded object serialized as a string (e.g. \'{"item_id": '
+    '"iron_knife", "quantity": 1}\'), never a bare string or a nested JSON object. '
+    "Required payload keys per action_type:\n"
+    "- add_item: item_id (string), quantity (positive integer)\n"
+    "- remove_item: item_id (string), quantity (positive integer)\n"
+    "- equip_item: item_id (string)\n"
+    "- unequip_item: item_id (string)\n"
+    "- set_world_flag: flag (string), value (boolean)\n"
+    "- set_character_memory: character_id (string), memory (string)\n"
+    "- set_character_relationship: character_id (string), relationship (string)\n"
+    "- set_character_status: character_id (string), status (string)\n"
+    "- update_quest: quest_id (string), status (one of active, completed, failed), "
+    "objective (string - required only when starting a quest that doesn't exist yet)\n"
+    "- move_player: location_id (string)\n"
+    "Only reference item_id/character_id/quest_id/location_id values that already "
+    "appear in world_lore or current_state below - never invent new ones.\n"
+    "</action_schema>"
+)
+
+
+def _action_schema_block() -> str:
+    return _ACTION_SCHEMA_BLOCK
 
 
 def _world_lore_block(content: GameContent) -> str:
@@ -41,6 +76,17 @@ def _current_state_block(state: GameState, content: GameContent) -> str:
     )
     location_desc = (
         f"{location.name}: {location.description}" if location else state.player.location_id
+    )
+
+    # The content model has no location-adjacency/exit graph (world.yaml's
+    # locations are a flat list), so any known location is a valid
+    # move_player target. Task 47's canary found the model otherwise
+    # invents a plausible-sounding but non-existent location_id (e.g. "The
+    # Tavern Main Hall" instead of the real ashfen_tavern id) with nothing
+    # here to ground it - list every known id so it has real values to pick
+    # from, per the action_schema block's "never invent new ones" rule.
+    known_location_lines = (
+        "\n".join(f"- {loc.id}: {loc.name}" for loc in content.world.locations) or "(none)"
     )
 
     item_names = {item.id: item.name for item in content.items.items}
@@ -79,6 +125,7 @@ def _current_state_block(state: GameState, content: GameContent) -> str:
         f"Player: {state.player.name} ({state.player.origin_label})\n"
         f"Traits: {', '.join(state.player.traits) or '(none)'}\n"
         f"Location: {location_desc}\n"
+        f"Known locations (valid move_player location_id values):\n{known_location_lines}\n"
         f"Inventory:\n{inventory_lines}\n"
         f"Characters:\n{character_lines}\n"
         f"World flags:\n{flag_lines}\n"

@@ -1,3 +1,5 @@
+import json
+
 from app.llm.schemas import NarrativeTurnRequest, ProposedAction, TurnResult
 
 # Deterministic canned narrative beats, cycled by the current turn number - no
@@ -30,7 +32,7 @@ class MockNarrativeProvider:
                 proposed_actions.append(
                     ProposedAction(
                         action_type="add_item",
-                        payload={"item_id": new_item.id, "quantity": 1},
+                        payload=json.dumps({"item_id": new_item.id, "quantity": 1}),
                     )
                 )
 

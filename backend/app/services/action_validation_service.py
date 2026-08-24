@@ -1,3 +1,4 @@
+import json
 from collections.abc import Callable
 from typing import Any
 
@@ -39,6 +40,16 @@ def _require_positive_int(payload: dict[str, Any], key: str) -> int:
     if value > max_quantity:
         raise ActionValidationError(f"'{key}' exceeds the maximum allowed ({max_quantity})")
     return value
+
+
+def _parse_payload(raw_payload: str) -> dict[str, Any]:
+    try:
+        parsed = json.loads(raw_payload)
+    except json.JSONDecodeError as exc:
+        raise ActionValidationError("'payload' is not valid JSON") from exc
+    if not isinstance(parsed, dict):
+        raise ActionValidationError("'payload' must be a JSON object")
+    return parsed
 
 
 def _find_inventory_entry(state: GameState, item_id: str) -> InventoryEntry | None:
@@ -198,5 +209,5 @@ def validate_and_apply_actions(
         applier = _ACTION_APPLIERS.get(action.action_type)
         if applier is None:
             raise ActionValidationError(f"Action type '{action.action_type}' is not allowed")
-        applier(working_state, content, action.payload)
+        applier(working_state, content, _parse_payload(action.payload))
     return working_state

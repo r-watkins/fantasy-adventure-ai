@@ -37,6 +37,7 @@ def test_contents_include_every_delimited_block_in_order(
 
     tags = [
         "<world_lore>",
+        "<action_schema>",
         "<current_state>",
         "<story_summary>",
         "<recent_messages>",
@@ -66,6 +67,50 @@ def test_world_lore_block_includes_world_name_and_tone(
     lore_block = prompt.contents.split("<world_lore>")[1].split("</world_lore>")[0]
     assert content.world.name in lore_block
     assert content.world.tone in lore_block
+
+
+def test_action_schema_block_documents_the_json_payload_shape_per_action_type(
+    request_for_tavern_cook: NarrativeTurnRequest,
+) -> None:
+    # Task 47's live canary finding: without this, the model has no signal
+    # that payload (a JSON string, not a dict) needs specific keys, and
+    # fills it with a bare string instead (observed: "Iron Cook Knife"
+    # instead of '{"item_id": "iron_cook_knife"}') - rejected by validation.
+    prompt = assemble_turn_prompt(request_for_tavern_cook)
+
+    schema_block = prompt.contents.split("<action_schema>")[1].split("</action_schema>")[0]
+    assert "JSON-encoded object serialized as a string" in schema_block
+    for action_type in (
+        "add_item",
+        "remove_item",
+        "equip_item",
+        "unequip_item",
+        "set_world_flag",
+        "set_character_memory",
+        "set_character_relationship",
+        "set_character_status",
+        "update_quest",
+        "move_player",
+    ):
+        assert action_type in schema_block
+
+
+def test_current_state_block_lists_known_locations_for_move_player(
+    request_for_tavern_cook: NarrativeTurnRequest,
+) -> None:
+    # Task 47's live canary finding: content.world.locations has no
+    # adjacency/exit graph, so without an explicit list the model invents a
+    # plausible-sounding but non-existent location_id (observed: "The
+    # Tavern Main Hall" instead of the real ashfen_tavern id).
+    prompt = assemble_turn_prompt(request_for_tavern_cook)
+    content = request_for_tavern_cook.content
+
+    state_block = prompt.contents.split("<current_state>")[1].split("</current_state>")[0]
+    assert len(content.world.locations) > 1, (
+        "fixture content should have >1 location to be meaningful"
+    )
+    for location in content.world.locations:
+        assert location.id in state_block
 
 
 def test_current_state_block_resolves_location_and_inventory_item_names(

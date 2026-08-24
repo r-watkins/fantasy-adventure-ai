@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -36,12 +37,14 @@ DESIGN_DOC_TURN_RESULT = {
 def _as_flat_actions(design_doc_actions: list[dict]) -> list[dict]:
     # design.md's decision: flat {action_type, payload} shape, not the source
     # doc's inline-fields-per-type shape - re-flatten the doc's example into
-    # what this schema actually accepts.
+    # what this schema actually accepts. payload is a JSON-encoded string
+    # (Task 47 finding: a dict-typed field renders as additionalProperties
+    # in the response schema, rejected by the Gemini Developer API).
     flattened = []
     for action in design_doc_actions:
         action_type = action["type"]
         payload = {k: v for k, v in action.items() if k != "type"}
-        flattened.append({"action_type": action_type, "payload": payload})
+        flattened.append({"action_type": action_type, "payload": json.dumps(payload)})
     return flattened
 
 
@@ -56,9 +59,9 @@ def test_turn_result_validates_flattened_design_doc_example() -> None:
     assert result.narrative.startswith("Mira's gaze")
     assert len(result.proposed_actions) == 2
     assert result.proposed_actions[0].action_type == "set_character_memory"
-    assert result.proposed_actions[0].payload["character_id"] == "mira_veyl"
+    assert json.loads(result.proposed_actions[0].payload)["character_id"] == "mira_veyl"
     assert result.proposed_actions[1].action_type == "set_world_flag"
-    assert result.proposed_actions[1].payload["value"] is True
+    assert json.loads(result.proposed_actions[1].payload)["value"] is True
 
 
 def test_turn_result_defaults_to_no_actions() -> None:
@@ -71,7 +74,7 @@ def test_turn_result_defaults_to_no_actions() -> None:
 
 def test_proposed_action_rejects_unknown_action_type() -> None:
     with pytest.raises(ValidationError):
-        ProposedAction.model_validate({"action_type": "delete_save", "payload": {}})
+        ProposedAction.model_validate({"action_type": "delete_save", "payload": "{}"})
 
 
 @pytest.mark.parametrize(
@@ -90,7 +93,7 @@ def test_proposed_action_rejects_unknown_action_type() -> None:
     ],
 )
 def test_proposed_action_accepts_each_allowed_type(action_type: str) -> None:
-    action = ProposedAction.model_validate({"action_type": action_type, "payload": {"a": 1}})
+    action = ProposedAction.model_validate({"action_type": action_type, "payload": '{"a": 1}'})
     assert action.action_type == action_type
 
 
