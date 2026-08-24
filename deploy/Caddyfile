@@ -2,9 +2,13 @@
 # backend, and terminates HTTPS automatically (Let's Encrypt) once
 # SITE_ADDRESS is set to a real domain that resolves to this host.
 #
-# Not wired into docker-compose.yml yet - the `web` service that mounts this
-# file is added in a later production-readiness task, alongside the frontend
-# production image that provides the static files served from /srv below.
+# Mounted by docker-compose.yml's `web` service (Task 50, `--profile
+# production`), which also builds the frontend production image (Task 48)
+# that provides the static files served from /srv below. Verified live
+# end-to-end during Tasks 48/50: handle-block ordering (/api/* before the
+# catch-all), the SPA try_files fallback, and automatic HTTPS all behave as
+# intended - real domains get a real Let's Encrypt cert automatically; no
+# further config is needed here for that.
 {$SITE_ADDRESS:localhost} {
 	encode zstd gzip
 
