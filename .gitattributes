@@ -1,0 +1,4 @@
+# Shell scripts run on Linux (Lightsail deploy scripts, container
+# entrypoints) - a CRLF shebang line (`#!/usr/bin/env bash\r`) fails there.
+# Force LF regardless of the committer's platform or core.autocrlf setting.
+*.sh text eol=lf
