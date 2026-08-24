@@ -14,6 +14,7 @@ from app.api.me import router as me_router
 from app.api.saves import router as saves_router
 from app.api.turns import router as turns_router
 from app.core.config import get_settings
+from app.core.logging import silence_sensitive_third_party_loggers
 from app.core.rate_limit import limiter
 from app.db.session import create_engine, create_session_factory
 from app.game.content_loader import load_content
@@ -41,6 +42,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 def create_app() -> FastAPI:
+    silence_sensitive_third_party_loggers()
     settings = get_settings()
     app = FastAPI(title="Fantasy AI Adventure API", lifespan=lifespan)
     app.state.settings = settings
