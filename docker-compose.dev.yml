@@ -12,7 +12,7 @@ services:
       # a host-built one (Windows/macOS binaries won't run in the container).
       - ./backend:/app
       - backend_venv:/app/.venv
-    command: sh -c "uv sync --locked && uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    command: sh -c "uv sync --locked && uv run alembic upgrade head && uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     ports:
       # Task 50 removed this from the base file (Caddy fronts the api in
       # production, so it's no longer reachable directly from the host) -

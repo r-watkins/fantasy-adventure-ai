@@ -15,4 +15,10 @@ set -e
 mkdir -p /data
 chown -R app:app /data
 
+# Task 58: run pending migrations before the real command starts, so a
+# fresh volume (first deploy, or any `docker volume rm`) never boots the
+# API against a schema-less database - see Task 20's `no such table: users`
+# discovery in design.md for the failure this closes.
+runuser -u app -- alembic upgrade head
+
 exec runuser -u app -- "$@"
