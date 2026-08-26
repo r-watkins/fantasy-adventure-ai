@@ -1,21 +1,164 @@
 origins:
   - id: tavern_cook
     name: Tavern Cook
-    tagline: The kitchen knows every secret that passes through the inn.
-    description: You keep the Hearth & Thistle alive with soup, sharp knives, and sharper hearing.
+    tagline: You know every secret is easier to hear over a simmering pot.
+    description: >-
+      You keep the Hearth & Thistle fed through floods, funerals, and one
+      regrettable beet incident. You are not a hero, but you know which knife
+      is sharp and who has been lying about being hungry.
     start_location_id: ashfen_tavern_kitchen
     starting_traits: [resourceful, observant]
     starting_inventory:
       - item_id: iron_cook_knife
         quantity: 1
-    opening_hook: A cooking fire flares unnaturally blue just as a hooded stranger arrives through the rain.
+      - item_id: grease_pencil
+        quantity: 1
+      - item_id: hearth_thistle_apron
+        quantity: 1
+    opening_hook: >-
+      A cooking fire turns blue as a hooded courier collapses in the common
+      room. In the ashes lies an imperial wax seal that has no business being
+      warm.
+    playstyle: Improvisation, social observation, practical survival
+    start_npc_ids: [osric_pike, mira_veyl, pip_the_goat]
+    special_capabilities:
+      - Improvise tools from kitchen, tavern, or household materials.
+      - Read social tensions through food, labor, and routine.
+      - Recognize poisons, spoiled food, and strange heat.
+    opening_quest_id: missing_ledger
+
   - id: wheat_farmer
     name: Wheat Farmer
-    tagline: You know the fields, the weather, and what should not grow beneath the soil.
-    description: You work a small family plot beyond the village boundary.
+    tagline: You know when soil is sick, when weather lies, and when crows are organizing.
+    description: >-
+      You work a small field beyond Ashfen. The village calls you practical,
+      which is another way of saying they come to you whenever something
+      needs doing in the rain.
     start_location_id: ashfen_east_fields
     starting_traits: [steadfast, practical]
     starting_inventory:
       - item_id: field_sickle
         quantity: 1
-    opening_hook: A section of wheat has withered overnight in the shape of a spiral.
+      - item_id: seed_sack
+        quantity: 1
+      - item_id: weathered_straw_cloak
+        quantity: 1
+    opening_hook: >-
+      One perfect spiral of wheat blackens overnight. Something beneath it
+      knocks out a rhythm your grandmother used to hum while locking the
+      cellar.
+    playstyle: Investigation, nature knowledge, resilience
+    start_npc_ids: [tomas_reed, mother_harl, crow_clerk]
+    special_capabilities:
+      - Interpret tracks, crop patterns, soil, weather, and animal behavior.
+      - Build simple field defenses and solve supply problems.
+      - Identify ordinary and magical plant blight.
+    opening_quest_id: root_below
+
+  - id: graveyard_keeper
+    name: Graveyard Keeper
+    tagline: The dead are quieter than the living, but not necessarily easier.
+    description: >-
+      You maintain Ashfen's graves, settle family disputes over headstones,
+      and know which mourners are there for grief and which are there for
+      inheritance.
+    start_location_id: ashfen_old_graveyard
+    starting_traits: [composed, superstitious]
+    starting_inventory:
+      - item_id: grave_spade
+        quantity: 1
+      - item_id: bell_widow_token
+        quantity: 1
+      - item_id: lantern_of_late_hours
+        quantity: 1
+    opening_hook: >-
+      Three graves stand open after a storm. Only two bodies are missing, and
+      the third grave contains a letter addressed in handwriting from your
+      childhood prayer book.
+    playstyle: Spirit mediation, ritual knowledge, patient investigation
+    start_npc_ids: [sister_vesna, old_hob, the_unpaid_dead]
+    special_capabilities:
+      - Identify disrupted burial rites and speak respectfully with minor spirits.
+      - Calm frightened people during supernatural events.
+      - Recognize when a ghost is lying, confused, or being used.
+    opening_quest_id: bell_widows_debt
+
+  - id: failed_archive_apprentice
+    name: Failed Archive Apprentice
+    tagline: You left the Candle Archive with one stolen book and several enemies who can read.
+    description: >-
+      You were nearly a proper scholar until the Archive decided that your
+      questions constituted a disciplinary incident. You disagree, mostly
+      because the file tried to bite you first.
+    start_location_id: candle_archive_outpost
+    starting_traits: [educated, anxious]
+    starting_inventory:
+      - item_id: borrowed_codex
+        quantity: 1
+      - item_id: ink_stained_gloves
+        quantity: 1
+      - item_id: archive_key_fragment
+        quantity: 1
+    opening_hook: >-
+      A sealed drawer opens by itself and offers you a job title you did not
+      apply for: Acting Imperial Disaster Clerk.
+    playstyle: Lore, decoding, risky academic competence
+    start_npc_ids: [adjutant_fenn, clerk_malvo, the_index_ghost]
+    special_capabilities:
+      - Read imperial notation and identify ritual procedure.
+      - Recall obscure laws, records, and historical details.
+      - Notice discrepancies in documents and official stories.
+    opening_quest_id: drowned_archive
+
+  - id: road_warden_deserter
+    name: Road Warden Deserter
+    tagline: You left the Black Reed Company before it taught you how to become a monster professionally.
+    description: >-
+      You know roads, patrol drills, ward-stones, and the exact tone an
+      officer uses before making a bad decision sound necessary.
+    start_location_id: old_imperial_road
+    starting_traits: [vigilant, stubborn]
+    starting_inventory:
+      - item_id: road_warden_spear
+        quantity: 1
+      - item_id: cracked_wardstone
+        quantity: 1
+      - item_id: black_reed_cloak
+        quantity: 1
+    opening_hook: >-
+      Your former unit marches toward Ashfen beneath orders signed by a
+      commander who has been dead for three years.
+    playstyle: Scouting, defense, faction tension
+    start_npc_ids: [captain_renna_voss, lantern_man, black_reed_patrol]
+    special_capabilities:
+      - Assess tactical danger, fortify routes, and read military behavior.
+      - Use or sabotage old road wards.
+      - Navigate checkpoints and recognize Black Reed protocol.
+    opening_quest_id: black_reed_march
+
+  - id: itinerant_bard
+    name: Itinerant Bard
+    tagline: You possess a lute, an unpaid tab, and a song that keeps attracting ghosts.
+    description: >-
+      You have survived bad crowds, worse roads, and a disastrous attempt to
+      perform for a duke's hunting dogs. You know stories are weapons, doors,
+      and occasionally pests.
+    start_location_id: ashfen_market_square
+    starting_traits: [persuasive, reckless]
+    starting_inventory:
+      - item_id: one_string_lute
+        quantity: 1
+      - item_id: suspiciously_fine_hat
+        quantity: 1
+      - item_id: ballad_of_the_hollow_king
+        quantity: 1
+    opening_hook: >-
+      During a performance, the entire market sings a verse nobody remembers
+      learning. When it ends, every dog in Ashfen turns to face east.
+    playstyle: Social influence, folklore, risky charm
+    start_npc_ids: [pip_the_goat, councilor_elin_barrows, market_widow_sena]
+    special_capabilities:
+      - Read a crowd and redirect attention.
+      - Recognize folklore, local songs, and haunted refrains.
+      - Negotiate with people who need an audience.
+    opening_quest_id: goat_prophecy

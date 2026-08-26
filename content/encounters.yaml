@@ -1,0 +1,35 @@
+encounter_pools:
+  village:
+    - A child reports that their shadow has been arriving home before they do.
+    - A well bucket returns filled with ash instead of water.
+    - A council meeting is interrupted by a ghost demanding recognition as a property owner.
+    - A baker's loaves keep rising into the shape of a crown.
+    - Someone has posted a missing-person notice for a road.
+
+  road:
+    - A toll booth appears where there was none yesterday and requests an apology instead of coin.
+    - A dead patrol marches past, ignoring everyone except anyone wearing Black Reed colors.
+    - A milestone gives contradictory directions in three languages.
+    - A wagon wheel rolls uphill by itself while its owner insists this is a family trait.
+    - The Lantern Man asks the player to identify a song he cannot remember.
+
+  forest:
+    - A fox offers to guide the player in exchange for a true compliment.
+    - A tree displays a wanted poster bearing the player's face before they have done anything notable.
+    - Mushrooms arrange themselves into an extremely rude legal opinion.
+    - A root-grown door appears in a hillside and knocks from the inside.
+    - A crow delivers a sealed invoice from the Moss Court.
+
+  graveyard:
+    - A ghost requests help retrieving its boots from a rival grave.
+    - Fresh flowers appear on an unmarked grave after someone tells a lie nearby.
+    - A mournful bell rings once for every unkept promise in the area.
+    - A corpse politely asks whether its funeral can be rescheduled.
+    - Old Hob complains that a new haunting is ignoring burial plot boundaries.
+
+  archive:
+    - A stack of books rearranges into a corridor leading to an unfiled memory.
+    - A form requires a signature from a dead official who is technically available.
+    - Ink leaks from a sealed drawer and writes a warning backward.
+    - A clerk insists a dangerous relic cannot be released without a proper checkout stamp.
+    - The Index Ghost has cross-referenced the player with an impossible future event.

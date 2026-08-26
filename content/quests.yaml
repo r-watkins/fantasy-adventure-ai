@@ -1,0 +1,198 @@
+quests:
+  - id: crownless_lantern
+    title: The Crownless Lantern
+    type: main_arc
+    initial_status: locked
+    summary: >-
+      The old ritual-engine that stabilized the realm is waking. Its
+      restoration, destruction, or transformation will decide more than the
+      fate of Ashfen.
+    unlock_conditions:
+      any_of:
+        - item: imperial_wax_seal
+        - item: dead_commanders_order
+        - item: lantern_activation_record
+        - origin: failed_archive_apprentice
+        - origin: road_warden_deserter
+    stages:
+      - id: strange_signs
+        objective: Discover why imperial signs are returning around Ashfen.
+      - id: competing_claims
+        objective: Learn what the major factions want from the Lantern.
+      - id: buried_history
+        objective: Recover the truth of the Lantern's final activation.
+      - id: reach_hollow_crown
+        objective: Reach the Lantern Chamber beneath Hollow Crown.
+      - id: choose_future
+        objective: Decide the fate of the Crownless Lantern.
+    primary_endings: [restore_lantern, shatter_lantern, remake_lantern, bind_new_anchor, refuse_choice]
+
+  - id: missing_ledger
+    title: The Ledger of Unpaid Roads
+    type: major_side_path
+    entry_sources: [tavern_cook, mira_veyl, imperial_wax_seal]
+    summary: A stolen courier ledger connects Ashfen's immediate danger to old imperial debts.
+    stages:
+      - id: blue_fire
+        objective: Investigate the blue fire and secure the wax seal.
+      - id: find_mira
+        objective: Learn why Mira was carrying the ledger.
+      - id: trace_delivery_route
+        objective: Follow the ledger's final coded route.
+      - id: decide_ledger_fate
+        objective: Return, expose, sell, hide, or use the ledger.
+    key_npcs: [mira_veyl, osric_pike, pip_the_goat, captain_renna_voss]
+    rewards: [ledger_of_unpaid_roads, ember_charm, mira_alliance]
+    branching_outcomes:
+      - Mira trusts the player and becomes a recurring ally.
+      - Black Reed gains access to road-debt intelligence.
+      - Candle Archive gains the ledger but hides one critical page.
+      - Player retains ledger and gains leverage at the cost of pursuit.
+
+  - id: root_below
+    title: Roots Below the Wheat
+    type: major_side_path
+    entry_sources: [wheat_farmer, black_wheat_sheaf, tomas_reed]
+    summary: The east fields are being altered by a buried ward and a forgotten forest bargain.
+    stages:
+      - id: inspect_spiral
+        objective: Determine the cause of the black wheat spiral.
+      - id: follow_crows
+        objective: Learn why the crows are carrying documents.
+      - id: uncover_bargain
+        objective: Discover Tomas Reed's old bargain with the Moss Court.
+      - id: resolve_root
+        objective: Repair, poison, awaken, or renegotiate with the root beneath the fields.
+    key_npcs: [tomas_reed, mother_harl, crow_clerk, moss_queen]
+    rewards: [black_wheat_sheaf, moss_court_favor, hidden_route_to_hollow_crown]
+    branching_outcomes:
+      - Fields recover but the player owes the Moss Court.
+      - Fields become magically fertile with unsettling side effects.
+      - The village loses a harvest but escapes the old bargain.
+      - A root-spirit becomes a dangerous but useful local guardian.
+
+  - id: bell_widows_debt
+    title: The Bell Widows' Debt
+    type: major_side_path
+    entry_sources: [graveyard_keeper, grave_letter, sister_vesna]
+    summary: Broken funeral bells are calling the dead into an old imperial obligation.
+    stages:
+      - id: open_graves
+        objective: Learn why graves opened after the storm.
+      - id: earn_vesna_trust
+        objective: Honor the dead and gain access to Bell Widow rites.
+      - id: descend_speaking_well
+        objective: Enter the speaking-well beneath the bell tower.
+      - id: settle_old_oath
+        objective: Release, renew, or exploit a dead official's oath.
+    key_npcs: [sister_vesna, old_hob, the_unpaid_dead, lantern_man]
+    rewards: [bell_clapper, bell_widow_alliance, road_spirit_truth]
+    branching_outcomes:
+      - Dead gain peace and provide testimony.
+      - An old oath is renewed for temporary safety.
+      - The player gains a powerful ghostly informant at a moral cost.
+
+  - id: drowned_archive
+    title: The Drowned Archive
+    type: major_side_path
+    entry_sources: [failed_archive_apprentice, adjutant_fenn, drowned_archive_chart]
+    summary: A submerged archive contains records of the Lantern's final activation.
+    stages:
+      - id: obtain_chart
+        objective: Obtain a safe route into the Drowned Valley.
+      - id: bargain_with_nine
+        objective: Negotiate with Archivist Nine.
+      - id: recover_record
+        objective: Retrieve the activation record from the flooded stacks.
+      - id: choose_record_fate
+        objective: Preserve, alter, conceal, or destroy the record.
+    key_npcs: [adjutant_fenn, clerk_malvo, archivist_nine, eel_priest]
+    rewards: [lantern_activation_record, memory_ink_vial, archive_access]
+    branching_outcomes:
+      - Archive trust improves; the truth becomes institutionally protected.
+      - Player gains a private copy and faction leverage.
+      - A critical detail is lost, changing available endgame routes.
+
+  - id: black_reed_march
+    title: The March of Black Reeds
+    type: major_side_path
+    entry_sources: [road_warden_deserter, dead_commanders_order, captain_renna_voss]
+    summary: The Black Reed Company marches on orders sent by a commander long dead.
+    stages:
+      - id: inspect_orders
+        objective: Prove or disprove the dead commander's authority.
+      - id: find_seventh_mile
+        objective: Locate the missing seventh mile of the imperial road.
+      - id: confront_road_memory
+        objective: Learn what the road remembers of its first anchor.
+      - id: decide_company_role
+        objective: Ally with, redirect, fracture, or defeat the Black Reed Company.
+    key_npcs: [captain_renna_voss, lantern_man, black_reed_patrol]
+    rewards: [roadglass_shard, wardstone_bridge_token, black_reed_support]
+    branching_outcomes:
+      - Renna joins the player against the road's influence.
+      - The company becomes a controlled but authoritarian safety force.
+      - The company fractures, reducing threat but destabilizing roads.
+
+  - id: moss_court_bargain
+    title: The Price in Green
+    type: faction_path
+    entry_sources: [moss_court_favor, crow_clerk, tomas_reed]
+    summary: The Moss Court offers help against imperial magic in exchange for a promise with consequences.
+    stages:
+      - id: find_glade
+        objective: Reach the Moss Court Glade.
+      - id: define_bargain
+        objective: State a bargain carefully enough to survive it.
+      - id: fulfill_price
+        objective: Pay the cost without losing more than intended.
+      - id: claim_favor
+        objective: Use the favor or preserve it for the endgame.
+    key_npcs: [moss_queen, crow_clerk, root_knight]
+    rewards: [moss_court_favor, root_key, forest_route]
+    branching_outcomes:
+      - Player gains a forest alliance.
+      - Player is bound by a personal promise.
+      - The Court becomes a rival if cheated or insulted.
+
+  - id: saint_of_salt
+    title: The Saint Under Salt
+    type: major_side_path
+    entry_sources: [mother_harl, brother_cal, salt_monastery]
+    summary: Illness and shared dreams lead to a bound saint beneath a coastal monastery.
+    stages:
+      - id: trace_dreams
+        objective: Determine why Ashfen villagers share a coastal dream.
+      - id: enter_monastery
+        objective: Gain access to the sealed crypt.
+      - id: hear_orrin
+        objective: Learn what Saint Orrin remembers about the Lantern.
+      - id: decide_saint_fate
+        objective: Keep Orrin bound, alter the binding, free it, or make a new covenant.
+    key_npcs: [mother_harl, brother_cal, saint_orrin, prior_elowen]
+    rewards: [salt_vial_of_orrin, saint_chain_link, lantern_anchor_truth]
+    branching_outcomes:
+      - Healing knowledge becomes available to Ashfen.
+      - The saint's freedom solves one problem and creates another.
+      - The player gains a binding tool needed for one endgame route.
+
+  - id: goat_prophecy
+    title: A Prophecy, Partially Eaten
+    type: comic_mystery_path
+    entry_sources: [itinerant_bard, pip_the_goat, goat_prophecy_page]
+    summary: Pip the goat has consumed part of a prophecy and now reacts to crucial evidence.
+    stages:
+      - id: stop_eating_evidence
+        objective: Keep Pip from consuming the remaining prophecy.
+      - id: follow_reactions
+        objective: Follow Pip to sites of imperial resonance.
+      - id: reconstruct_verse
+        objective: Reconstruct the missing verse through songs, ghosts, and tooth marks.
+      - id: choose_pip_fate
+        objective: Protect Pip, cure Pip, or allow Pip to become a local prophet.
+    key_npcs: [pip_the_goat, mira_veyl, sister_vesna, hollow_king_echo]
+    rewards: [goat_prophecy_page, alternate_endgame_hint, pip_companion_state]
+    branching_outcomes:
+      - Pip becomes a helpful traveling companion.
+      - Pip is cured but the player loses an omen source.
+      - Pip becomes a minor prophet with escalating property damage.

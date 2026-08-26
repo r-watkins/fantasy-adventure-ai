@@ -1,22 +1,400 @@
 items:
   - id: iron_cook_knife
     name: Iron Cook Knife
+    category: weapon_tool
+    rarity: common
+    description: A well-balanced kitchen knife with a blackened wooden handle.
+    tags: [blade, tool, kitchen, starting_item]
+    effects: [cut_rope, prepare_food, defend]
+
+  - id: grease_pencil
+    name: Grease Pencil
+    category: tool
+    rarity: common
+    description: A thick wax pencil that writes on crockery, stone, and occasionally ghosts.
+    tags: [writing, kitchen, starting_item]
+    effects: [mark_surface, reveal_heat, leave_message]
+
+  - id: hearth_thistle_apron
+    name: Hearth & Thistle Apron
+    category: clothing
+    rarity: common
+    description: A durable apron with too many pockets and one stubborn stew stain.
+    tags: [clothing, practical, starting_item]
+    effects: [conceal_small_item, identify_kitchen_tool]
+
+  - id: field_sickle
+    name: Field Sickle
+    category: weapon_tool
+    rarity: common
+    description: A farmer's curved blade, sharp from honest use.
+    tags: [blade, harvest, starting_item]
+    effects: [cut_plants, harvest, defend]
+
+  - id: seed_sack
+    name: Seed Sack
+    category: tool
+    rarity: common
+    description: Winter wheat seed from a trusted field, unless the field has changed its mind.
+    tags: [farming, starting_item]
+    effects: [test_soil, lure_birds, mark_path]
+
+  - id: weathered_straw_cloak
+    name: Weathered Straw Cloak
+    category: clothing
+    rarity: common
+    description: A patched cloak that smells of rain, hay, and stubbornness.
+    tags: [outdoors, starting_item]
+    effects: [resist_cold, blend_in_field]
+
+  - id: grave_spade
+    name: Grave Spade
+    category: weapon_tool
+    rarity: common
+    description: A square-headed spade, polished by work and solemn occasions.
+    tags: [burial, tool, starting_item]
+    effects: [dig, break_earth, perform_burial]
+
+  - id: bell_widow_token
+    name: Bell Widow Token
+    category: token
+    rarity: uncommon
+    description: A black coin stamped with a closed eye and a tiny bell.
+    tags: [funeral, faction, starting_item]
+    effects: [request_funeral_aid, calm_minor_dead]
+
+  - id: lantern_of_late_hours
+    name: Lantern of Late Hours
+    category: magic_tool
+    rarity: uncommon
+    description: A lantern that lights only when someone nearby has unfinished business.
+    tags: [magic, light, starting_item]
+    effects: [reveal_unfinished_business, light_darkness]
+
+  - id: borrowed_codex
+    name: Borrowed Codex of Imperial Procedures
+    category: book
+    rarity: uncommon
+    description: A dry manual that becomes fascinating at exactly the worst moment.
+    tags: [archive, lore, starting_item]
+    effects: [identify_imperial_ritual, cite_procedure]
+
+  - id: ink_stained_gloves
+    name: Ink-Stained Gloves
+    category: clothing
+    rarity: common
+    description: Archive gloves with a smudge that moves when nobody is watching.
+    tags: [archive, starting_item]
+    effects: [handle_fragile_document, recognize_ink_magic]
+
+  - id: archive_key_fragment
+    name: Archive Key Fragment
+    category: key
+    rarity: rare
+    description: One-third of a brass key that hums near sealed imperial doors.
+    tags: [archive, quest, starting_item]
+    effects: [open_partial_archive_lock, sense_sealed_door]
+
+  - id: road_warden_spear
+    name: Road Warden Spear
     category: weapon
     rarity: common
-    description: A balanced kitchen knife, kept sharp through long shifts.
-    tags: [starting_item, blade, tool]
-    usable_in_prompt: true
+    description: A short spear issued to wardens who needed to keep trouble at arm's length.
+    tags: [guard, weapon, starting_item]
+    effects: [defend, keep_distance, brace]
+
+  - id: cracked_wardstone
+    name: Cracked Wardstone
+    category: magic_tool
+    rarity: uncommon
+    description: A palm-sized road ward that flickers near ward magic and poor decisions.
+    tags: [road, magic, starting_item]
+    effects: [sense_road_magic, repel_minor_wraith]
+
+  - id: black_reed_cloak
+    name: Black Reed Cloak
+    category: clothing
+    rarity: common
+    description: A patrol cloak with the insignia carefully removed and poorly concealed.
+    tags: [faction, disguise, starting_item]
+    effects: [pass_as_warden, resist_rain]
+
+  - id: one_string_lute
+    name: One-String Lute
+    category: instrument
+    rarity: uncommon
+    description: A battered lute that produces more notes than its construction warrants.
+    tags: [music, magic, starting_item]
+    effects: [perform, soothe_spirit, draw_attention]
+
+  - id: suspiciously_fine_hat
+    name: Suspiciously Fine Hat
+    category: clothing
+    rarity: uncommon
+    description: Velvet headwear in a village where velvet is usually evidence.
+    tags: [social, disguise, starting_item]
+    effects: [impress_crowd, distract_goat]
+
+  - id: ballad_of_the_hollow_king
+    name: Ballad of the Hollow King
+    category: song
+    rarity: rare
+    description: A song whose verses alter near imperial ruins.
+    tags: [lore, magic, starting_item]
+    effects: [invoke_hollow_king, reveal_hidden_verse]
+
+  - id: imperial_wax_seal
+    name: Imperial Wax Seal
+    category: clue
+    rarity: uncommon
+    description: Silver-grey wax bearing the extinguished sigil of the Crownless Lantern.
+    tags: [imperial, clue, quest]
+    effects: [prove_imperial_involvement]
+
   - id: ember_charm
     name: Ember Charm
     category: trinket
     rarity: uncommon
-    description: A warm pendant that flares near old fire magic.
+    description: A copper pendant that warms near old fire magic.
     tags: [magic, quest]
-    usable_in_prompt: true
-  - id: field_sickle
-    name: Field Sickle
-    category: weapon
+    effects: [sense_fire_magic, warm_small_area]
+
+  - id: tavern_cellar_key
+    name: Tavern Cellar Key
+    category: key
     rarity: common
-    description: A curved blade worn smooth by years of harvest work.
-    tags: [starting_item, blade, tool]
-    usable_in_prompt: true
+    description: A heavy iron key that smells faintly of onions and old stone.
+    tags: [key, tavern]
+    effects: [open_tavern_cellar]
+
+  - id: goat_prophecy_page
+    name: Goat-Chewed Prophecy Page
+    category: clue
+    rarity: rare
+    description: A ritual page with important lines replaced by enthusiastic bite marks.
+    tags: [magic, clue, comedy]
+    effects: [hint_lantern_path, attract_pip]
+
+  - id: black_wheat_sheaf
+    name: Black Wheat Sheaf
+    category: reagent
+    rarity: uncommon
+    description: Wheat grown above a sleeping ward-stone. It rustles in rooms without wind.
+    tags: [cursed, farming, reagent]
+    effects: [test_root_corruption, brew_bitter_draught]
+
+  - id: field_wardstone_fragment
+    name: Field Wardstone Fragment
+    category: magic_tool
+    rarity: uncommon
+    description: A chipped stone fragment engraved with a weather-control rune.
+    tags: [imperial, ward, farming]
+    effects: [sense_weather_magic, repair_minor_ward]
+
+  - id: rusted_windmill_key
+    name: Rusted Windmill Key
+    category: key
+    rarity: common
+    description: A long iron key with wheat-shaped teeth.
+    tags: [key, field]
+    effects: [open_windmill_mechanism]
+
+  - id: grave_letter
+    name: Letter from an Open Grave
+    category: clue
+    rarity: rare
+    description: A damp letter addressed to the player in unsettlingly familiar handwriting.
+    tags: [graveyard, clue, personal]
+    effects: [advance_bell_widows_debt]
+
+  - id: bell_clapper
+    name: Bell Clapper of the Speaking-Well
+    category: magic_tool
+    rarity: uncommon
+    description: A small iron clapper that vibrates when the dead want to be heard.
+    tags: [funeral, magic]
+    effects: [speak_to_minor_dead, activate_speaking_well]
+
+  - id: mourning_salt
+    name: Mourning Salt
+    category: consumable
+    rarity: common
+    description: Coarse black salt used in Ashfen funeral rites.
+    tags: [funeral, ward]
+    effects: [ward_grave, calm_restless_spirit]
+
+  - id: ledger_of_unpaid_roads
+    name: Ledger of Unpaid Roads
+    category: quest_item
+    rarity: rare
+    description: A courier ledger listing routes, debts, and names still collecting interest after death.
+    tags: [road, archive, quest]
+    effects: [reveal_road_debts, unlock_missing_ledger_path]
+
+  - id: roadglass_shard
+    name: Roadglass Shard
+    category: magic_tool
+    rarity: rare
+    description: A blue-grey shard that reflects the destination you fear most.
+    tags: [road, magic]
+    effects: [find_hidden_route, show_feared_destination]
+
+  - id: wardstone_bridge_token
+    name: Wardstone Bridge Token
+    category: token
+    rarity: uncommon
+    description: A brass toll token stamped with a bridge that no longer exists.
+    tags: [road, token]
+    effects: [cross_wardstone_bridge_safely]
+
+  - id: dead_commanders_order
+    name: Dead Commander's Order
+    category: document
+    rarity: rare
+    description: A fresh military order signed by an officer dead for three years.
+    tags: [black_reed, clue, road]
+    effects: [challenge_black_reed_orders]
+
+  - id: moss_court_favor
+    name: Moss Court Favor
+    category: token
+    rarity: rare
+    description: A green glass bead containing a promise whispered by roots.
+    tags: [faction, bargain, magic]
+    effects: [request_moss_court_audience, pay_bargain]
+
+  - id: root_key
+    name: Root Key
+    category: key
+    rarity: uncommon
+    description: A living twig shaped like a key; it grows one new leaf when used honestly.
+    tags: [forest, key, magic]
+    effects: [open_root_bound_door]
+
+  - id: mirror_pool_water
+    name: Mirror Pool Water
+    category: consumable
+    rarity: uncommon
+    description: Water that shows the price of a decision when held in a still cup.
+    tags: [forest, omen, magic]
+    effects: [reveal_bargain_cost]
+
+  - id: lantern_activation_record
+    name: Lantern Activation Record
+    category: document
+    rarity: legendary
+    description: A damaged record of the Crownless Lantern's final activation.
+    tags: [imperial, lantern, endgame]
+    effects: [unlock_restore_or_remake_path]
+
+  - id: archivist_nines_seal
+    name: Archivist Nine's Seal
+    category: token
+    rarity: rare
+    description: A water-stained seal granting conditional archive access.
+    tags: [archive, faction]
+    effects: [request_archive_truth]
+
+  - id: memory_ink_vial
+    name: Memory Ink Vial
+    category: consumable
+    rarity: rare
+    description: Ink that restores one buried memory or stains one truth permanently into the mind.
+    tags: [archive, memory, magic]
+    effects: [restore_memory, preserve_memory]
+
+  - id: salt_vial_of_orrin
+    name: Salt Vial of Orrin
+    category: consumable
+    rarity: rare
+    description: White salt that makes lies taste bitter and curses sting.
+    tags: [salt, healing, truth]
+    effects: [ward_minor_curse, reveal_lie_once]
+
+  - id: saint_chain_link
+    name: Saint Chain Link
+    category: artifact_fragment
+    rarity: rare
+    description: A salt-crusted iron link warm with sleeping breath.
+    tags: [saint, binding, quest]
+    effects: [strengthen_binding, weaken_binding]
+
+  - id: coastal_prayer_book
+    name: Coastal Prayer Book
+    category: book
+    rarity: uncommon
+    description: A prayer book with margins full of practical medical notes and rude comments about bishops.
+    tags: [salt, lore, healing]
+    effects: [perform_salt_rite, identify_saint_dream]
+
+  - id: crownless_lantern_lens
+    name: Crownless Lantern Lens
+    category: artifact
+    rarity: legendary
+    description: A cold golden lens from the imperial ritual-engine.
+    tags: [lantern, endgame, imperial]
+    effects: [activate_lantern_path, shatter_lantern_path, remake_lantern_path]
+
+  - id: hollow_crown_key
+    name: Hollow Crown Key
+    category: key
+    rarity: legendary
+    description: A black key that opens only when the bearer admits what they want power for.
+    tags: [hollow_crown, endgame]
+    effects: [open_lantern_chamber]
+
+  - id: anchor_chain
+    name: Anchor Chain
+    category: artifact_fragment
+    rarity: legendary
+    description: A chain of pale metal that grows heavier near unspoken duty.
+    tags: [lantern, sacrifice, endgame]
+    effects: [bind_new_anchor, break_old_anchor]
+
+  - id: ashfen_map_fragment
+    name: Ashfen Map Fragment
+    category: document
+    rarity: uncommon
+    description: A torn scrap of an old survey map, marking a road branch that no longer exists.
+    tags: [map, clue]
+    effects: [reveal_vanished_road]
+
+  - id: cheap_luck_charm
+    name: Cheap Luck Charm
+    category: trinket
+    rarity: common
+    description: A market trinket that probably does nothing, except when it doesn't.
+    tags: [market, comedy]
+    effects: [minor_luck_flavor]
+
+  - id: crow_feather_quill
+    name: Crow Feather Quill
+    category: tool
+    rarity: common
+    description: A quill plucked from a suspiciously articulate crow.
+    tags: [writing, moss_court]
+    effects: [write_binding_note]
+
+  - id: archivist_permit
+    name: Archivist Permit
+    category: document
+    rarity: uncommon
+    description: A stamped permission slip that opens some doors and offends others.
+    tags: [archive, document]
+    effects: [grant_archive_access]
+
+  - id: drowned_archive_chart
+    name: Drowned Archive Chart
+    category: document
+    rarity: rare
+    description: A water-stained chart marking a safe route into the Drowned Valley.
+    tags: [archive, map, quest]
+    effects: [reveal_drowned_archive_route]
+
+  - id: red_wax_cipher
+    name: Red Wax Cipher
+    category: clue
+    rarity: rare
+    description: A cipher key stamped in red wax, used to decode sealed imperial correspondence.
+    tags: [archive, clue, imperial]
+    effects: [decode_imperial_cipher]

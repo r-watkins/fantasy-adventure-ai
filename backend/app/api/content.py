@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.api.deps import get_content, get_current_user
-from app.game.content_schemas import GameContent, Item, Location, Origin
+from app.game.content_schemas import Faction, GameContent, Item, Location, Npc, Origin
 from app.models.user import User
 
 router = APIRouter(prefix="/content", tags=["content"])
@@ -29,3 +29,19 @@ async def list_locations(
     _user: User = Depends(get_current_user),
 ) -> list[Location]:
     return content.world.locations
+
+
+@router.get("/npcs", response_model=list[Npc])
+async def list_npcs(
+    content: GameContent = Depends(get_content),
+    _user: User = Depends(get_current_user),
+) -> list[Npc]:
+    return content.npcs.npcs
+
+
+@router.get("/factions", response_model=list[Faction])
+async def list_factions(
+    content: GameContent = Depends(get_content),
+    _user: User = Depends(get_current_user),
+) -> list[Faction]:
+    return content.factions.factions

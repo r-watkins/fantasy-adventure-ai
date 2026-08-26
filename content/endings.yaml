@@ -1,0 +1,60 @@
+endings:
+  - id: restore_lantern
+    name: Restore the Crownless Lantern
+    premise: Rebuild the ancient stabilizing network.
+    required_evidence: [lantern_activation_record, crownless_lantern_lens]
+    typical_allies: [black_reed_company, candle_archive]
+    benefits: Roads, wards, and weather stabilize quickly.
+    costs: The system again centralizes power and needs an anchor or authority.
+    epilogue_variants:
+      - Renna oversees a constrained wardenship.
+      - Archive administration becomes the new imperial bureaucracy.
+      - Player becomes an uneasy guardian of the restored network.
+
+  - id: shatter_lantern
+    name: Shatter the Crownless Lantern
+    premise: End the imperial machine permanently.
+    required_evidence: [crownless_lantern_lens, destructive_ritual_knowledge]
+    typical_allies: [moss_court, some_bell_widows]
+    benefits: The empire's final control system cannot return.
+    costs: Protective wards fail; communities face a dangerous transition.
+    epilogue_variants:
+      - Ashfen builds local defenses with village and forest support.
+      - Black Reed fractures; some become protectors, others raiders.
+      - Road spirits are freed but the world becomes less navigable.
+
+  - id: remake_lantern
+    name: Remake the Lantern as a Shared Covenant
+    premise: Transform the machine from imperial command into a distributed pact.
+    required_evidence: [crownless_lantern_lens, moss_court_favor, salt_vial_of_orrin, bell_clapper]
+    typical_allies: [moss_court, salt_saints, bell_widows, ashfen_village_council]
+    benefits: Stability returns without one faction owning the system.
+    costs: Every participating party must honor ongoing obligations; compromise leaves some enemies.
+    epilogue_variants:
+      - Ashfen becomes the first covenant village.
+      - Spirits and humans negotiate an uneasy new political order.
+      - The player is remembered as founder, traitor, or both.
+
+  - id: bind_new_anchor
+    name: Bind a New Anchor
+    premise: Preserve the Lantern by tying a willing person to it.
+    required_evidence: [anchor_chain, lantern_activation_record]
+    typical_allies: [black_reed_company, candle_archive, saint_orrin]
+    benefits: Rapid stability with a human conscience at the center.
+    costs: The anchor loses freedom and risks repeating the original tragedy.
+    epilogue_variants:
+      - The player becomes anchor.
+      - A trusted NPC volunteers, changing their future.
+      - The Hollow King resumes the role under altered terms.
+
+  - id: refuse_choice
+    name: Refuse the Machine
+    premise: Walk away from the Lantern and defend Ashfen through smaller, human-scale means.
+    required_evidence: [access_to_lantern_chamber]
+    typical_allies: [ashfen_village_council, selected_personal_allies]
+    benefits: No one gains imperial-scale power.
+    costs: The larger crisis remains unresolved and the region must adapt locally.
+    epilogue_variants:
+      - Ashfen survives as an independent, fortified community.
+      - The player becomes a local legend rather than a ruler.
+      - The Lantern's future remains uncertain for a sequel or future campaign.

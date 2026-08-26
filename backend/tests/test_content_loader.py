@@ -42,6 +42,14 @@ origins:
     opening_hook: Something happens.
 """
 
+VALID_FACTIONS = "factions: []\n"
+
+VALID_QUESTS = "quests: []\n"
+
+VALID_ENDINGS = "endings: []\n"
+
+VALID_ENCOUNTERS = "encounter_pools: {}\n"
+
 VALID_NARRATOR_PROMPT = "Be a good narrator.\n"
 
 
@@ -54,6 +62,10 @@ def _write_content_dir(tmp_path: Path, **overrides: str) -> Path:
         "items.yaml": VALID_ITEMS,
         "npcs.yaml": VALID_NPCS,
         "starting_origins.yaml": VALID_ORIGINS,
+        "factions.yaml": VALID_FACTIONS,
+        "quests.yaml": VALID_QUESTS,
+        "endings.yaml": VALID_ENDINGS,
+        "encounters.yaml": VALID_ENCOUNTERS,
         "prompts/narrator_system.md": VALID_NARRATOR_PROMPT,
     }
     files.update(overrides)
@@ -69,11 +81,25 @@ def test_load_content_against_real_repo_content() -> None:
 
     assert {"tavern_cook", "wheat_farmer"} <= content.origin_ids
     assert content.narrator_system_prompt.strip() != ""
+    assert len(content.world.regions) > 0
+    assert len(content.factions.factions) > 0
+    assert len(content.quests.quests) > 0
+    assert len(content.endings.endings) > 0
+    assert len(content.encounters.encounter_pools) > 0
+    assert "crownless_lantern" in content.quest_template_ids
 
     for origin in content.origins.origins:
         assert origin.start_location_id in content.location_ids
         for entry in origin.starting_inventory:
             assert entry.item_id in content.item_ids
+        if origin.opening_quest_id is not None:
+            assert origin.opening_quest_id in content.quest_template_ids
+
+    for npc in content.npcs.npcs:
+        if npc.faction_id is not None:
+            assert npc.faction_id in content.faction_ids
+        if npc.location_id is not None:
+            assert npc.location_id in content.location_ids
 
 
 def test_load_content_succeeds_on_valid_minimal_content(tmp_path: Path) -> None:

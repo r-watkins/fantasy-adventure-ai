@@ -1,0 +1,66 @@
+factions:
+  - id: ashfen_village_council
+    name: Ashfen Village Council
+    motto: Keep the roof on until spring.
+    public_role: Runs the village through exhausted committees and practical compromises.
+    leader: councilor_elin_barrows
+    values: [survival, local_control, stability]
+    methods: [negotiation, rationing, favors, mild passive aggression]
+    reputation_effects:
+      positive: Villagers share rumor, shelter, supplies, and informal help.
+      negative: Prices rise, doors close, and people stop warning the player about danger.
+
+  - id: black_reed_company
+    name: Black Reed Company
+    motto: The road holds.
+    public_role: Former imperial road wardens now acting as paid guards and ward specialists.
+    leader: captain_renna_voss
+    values: [discipline, order, containment]
+    methods: [patrols, contracts, ward magic, force]
+    reputation_effects:
+      positive: Access to checkpoints, military knowledge, and guarded routes.
+      negative: Searched at road gates, pursued by patrols, distrusted by loyalists.
+
+  - id: candle_archive
+    name: Candle Archive
+    motto: What is written can be accounted for.
+    public_role: Custodians of imperial records, civic papers, and dangerous knowledge.
+    leader: adjutant_fenn
+    values: [knowledge, procedure, preservation]
+    methods: [research, classification, secrecy, bureaucratic leverage]
+    reputation_effects:
+      positive: Access to research, codes, sealed rooms, and helpful clerks.
+      negative: Records are withheld, requests are delayed, and inconvenient reports appear.
+
+  - id: moss_court
+    name: The Moss Court
+    motto: Nothing is free; even freedom has roots.
+    public_role: A shifting assembly of woodland spirits and humans bound by old bargains.
+    leader: moss_queen
+    values: [balance, reciprocity, memory]
+    methods: [bargains, illusions, path magic, omen animals]
+    reputation_effects:
+      positive: Safe forest paths, spirit favors, natural omens.
+      negative: Lost routes, spoiled food, dreams with invoices.
+
+  - id: salt_saints
+    name: The Salt Saints
+    motto: Preserve what can be saved.
+    public_role: Healers and ward-keepers associated with the coastal monastery.
+    leader: prior_elowen
+    values: [mercy, sacrifice, duty]
+    methods: [healing, wards, confession, salt rites]
+    reputation_effects:
+      positive: Healing access, curse protection, sanctuary.
+      negative: Treatment refused, truths withheld, old vows called due.
+
+  - id: bell_widows
+    name: The Bell Widows
+    motto: The dead are owed a proper ending.
+    public_role: Funeral singers, grave keepers, and guardians of ritual death customs.
+    leader: sister_vesna
+    values: [dignity, remembrance, boundaries]
+    methods: [funerary rites, spirit mediation, testimony]
+    reputation_effects:
+      positive: Ghostly information, funeral protection, old family records.
+      negative: Restless dead become less cooperative and public trust erodes.

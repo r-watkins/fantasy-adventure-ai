@@ -1,6 +1,6 @@
 from typing import NamedTuple
 
-from app.game.content_schemas import GameContent
+from app.game.content_schemas import GameContent, Npc
 from app.game.game_state import GameState
 from app.llm.schemas import NarrativeTurnRequest
 
@@ -61,12 +61,59 @@ def _action_schema_block() -> str:
 
 def _world_lore_block(content: GameContent) -> str:
     lore_lines = "\n".join(f"- {line}" for line in content.world.core_lore) or "(none)"
+
+    region_lines = (
+        "\n".join(
+            f"- {region.id}: {region.name} - {region.description}"
+            for region in content.world.regions
+        )
+        or "(none)"
+    )
+
+    faction_lines = (
+        "\n".join(
+            f'- {faction.id}: {faction.name} ("{faction.motto}") - {faction.public_role} '
+            f"Values: {', '.join(faction.values) or '(none)'}."
+            for faction in content.factions.factions
+        )
+        or "(none)"
+    )
+
+    npc_lines = "\n".join(_describe_npc(npc, content) for npc in content.npcs.npcs) or "(none)"
+
+    encounter_lines = (
+        "\n".join(
+            f"- {pool_name}: {'; '.join(seeds)}"
+            for pool_name, seeds in content.encounters.encounter_pools.items()
+        )
+        or "(none)"
+    )
+
     return (
         "<world_lore>\n"
         f"World: {content.world.name}\n"
         f"Tone: {content.world.tone}\n"
         f"{lore_lines}\n"
+        f"Regions:\n{region_lines}\n"
+        f"Factions:\n{faction_lines}\n"
+        f"NPCs (for consistent portrayal - secrets are for you to know and hint at, "
+        f"not to reveal outright):\n{npc_lines}\n"
+        f"Encounter seeds (optional flavor, do not force every turn):\n{encounter_lines}\n"
         "</world_lore>"
+    )
+
+
+def _describe_npc(npc: Npc, content: GameContent) -> str:
+    location = next((loc for loc in content.world.locations if loc.id == npc.location_id), None)
+    location_name = location.name if location else npc.location_id or "(unplaced)"
+    faction_name = next(
+        (f.name for f in content.factions.factions if f.id == npc.faction_id),
+        "unaffiliated" if npc.faction_id is None else npc.faction_id,
+    )
+    secret = f" Secret: {npc.secrets[0]}" if npc.secrets else ""
+    return (
+        f"- {npc.id}: {npc.name}, {npc.role}, at {location_name} ({faction_name}). "
+        f"{npc.description} Voice: {npc.voice or '(unspecified)'}.{secret}"
     )
 
 

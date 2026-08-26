@@ -1,17 +1,330 @@
 world_id: ashfen_realm
-version: 1
+version: 2
 name: The Ashfen Realm
-tone: Grounded high fantasy; mysterious, hopeful, and dangerous without graphic gore.
+tone: >-
+  Dark-fantasy borderland built on the bones of an empire that tried to automate
+  magic, governance, weather, and grief. Roads remember dead armies, churches
+  keep basements for reasonable concerns, and forests make contracts in
+  handwriting made of roots - yet people still make stew, fall in love, and
+  argue with goats. Roughly 60% eerie mystery and difficult choices, 25%
+  grounded village life and human tenderness, 15% absurdity.
 core_lore:
-  - The old imperial roads are failing, and remote villages govern themselves.
-  - Magic is real but costly; powerful relics are rare and feared.
+  - "Year -430: The Veyrian Empire begins building the Crownless Lantern network."
+  - "Year -280: Imperial roads, ward-stones, and archive towers connect most of the realm."
+  - "Year -97: The first known Lantern Anchor disappears during a failed renewal ceremony."
+  - "Year -21: The Crownless Lantern goes dark; the empire collapses over the following years."
+  - "Year -6: Ashfen becomes an independent border village under a loose council."
+  - "Year 0: Strange imperial seals, dead road orders, and failing wards appear around Ashfen."
+  - "Metaphysical rule: Names freely given create a thread of obligation."
+  - "Metaphysical rule: Promises made near old magic become easier for spirits to enforce."
+  - "Metaphysical rule: Every spell leaves a sensory trace - scent, frost, ash, ringing, color, or altered shadows."
+  - "Metaphysical rule: The dead can remember, but their memories become less reliable when repeatedly disturbed."
+  - "Metaphysical rule: Old imperial magic solves the stated problem efficiently and ignores the human meaning of the request."
+  - "Central question: Is stability worth control?"
+  - "Central question: Can inherited systems be repaired without repeating their harm?"
+  - "Central question: What does a person owe their community, their past, and themselves?"
+  - "Central question: When is a promise sacred, and when is it a trap?"
+regions:
+  - id: ashfen_village
+    name: Ashfen Village
+    description: >-
+      A muddy frontier settlement built around an old imperial road junction.
+      It has a tavern, market, fields, graveyard, archive outpost, and enough
+      secrets to justify its surprisingly poor tourism board.
+    threats: [failing_wards, village_politics, road_spirits]
+  - id: wyrdwood
+    name: The Wyrdwood
+    description: >-
+      An ancient forest where moss grows over memories and every clearing has
+      terms and conditions.
+    threats: [moss_court, altered_paths, hungry_fauna]
+  - id: drowned_valley
+    name: The Drowned Valley
+    description: >-
+      A lake-filled basin containing an imperial archive whose shelves remain
+      oddly dry below the waterline.
+    threats: [drowned_scribes, unstable_magic, memory_bargains]
+  - id: salt_coast
+    name: The Salt Coast
+    description: >-
+      White cliffs, hard weather, salt monasteries, and caves that hum when
+      the tide is low.
+    threats: [saint_dreams, cliff_storms, oath_salt]
+  - id: northern_moor
+    name: The Northern Moor
+    description: >-
+      A cold expanse of heather, ruined forts, and the abandoned first
+      capital of the empire.
+    threats: [hollow_king_echo, road_anomalies, imperial_relics]
 locations:
   - id: ashfen_tavern
     name: The Hearth & Thistle
-    description: A weathered roadside inn at the edge of Ashfen village.
+    region_id: ashfen_village
+    type: social_hub
+    mood: Warm light, wet wool, bad stew, and better secrets.
+    description: >-
+      A crooked roadside tavern whose kitchen is the safest place in Ashfen
+      until it very much is not. The floorboards complain, the roof leaks in
+      only three known places, and Pip the goat has acquired voting rights by
+      force of personality.
+    sublocations:
+      - id: hearth_thistle_common_room
+        name: Common Room
+      - id: hearth_thistle_kitchen
+        name: Kitchen
+      - id: hearth_thistle_cellar
+        name: Cellar
+      - id: hearth_thistle_stable
+        name: Stable
+      - id: hearth_thistle_upstairs
+        name: Upstairs Rooms
+    npc_ids: [osric_pike, mira_veyl, pip_the_goat, market_widow_sena]
+    available_actions: [talk, rest, gather_rumors, cook, inspect, hide, trade]
+    secrets:
+      - A bricked cellar tunnel leads to the old imperial road.
+      - Osric hides an Archive message tube inside a decorative ham.
+      - Pip reacts violently to cursed documents and velvet hats.
+    discoverable_items: [imperial_wax_seal, tavern_cellar_key, goat_prophecy_page]
+    quest_hooks: [missing_ledger, goat_prophecy]
+
   - id: ashfen_tavern_kitchen
     name: The Hearth & Thistle Kitchen
-    description: A cramped, warm kitchen thick with the smell of woodsmoke and stew.
+    region_id: ashfen_village
+    type: social_hub
+    mood: Woodsmoke, simmering stew, and a fire that has opinions tonight.
+    description: >-
+      A cramped, warm kitchen thick with the smell of woodsmoke and stew,
+      tucked behind the Hearth & Thistle's common room. Every secret in
+      Ashfen eventually passes across this counter.
+    npc_ids: [osric_pike, mira_veyl, pip_the_goat]
+    available_actions: [talk, cook, inspect, hide]
+    discoverable_items: [imperial_wax_seal]
+    quest_hooks: [missing_ledger]
+
+  - id: ashfen_market_square
+    name: Ashfen Market Square
+    region_id: ashfen_village
+    type: social_hub
+    mood: Mud, cabbage, gossip, and public arguments conducted at ceremonial volume.
+    description: >-
+      A small market arranged around a cracked imperial milestone. Traders
+      sell practical goods, charms of dubious legality, and at least one
+      thing that is definitely a turnip despite the seller's claims.
+    npc_ids: [councilor_elin_barrows, market_widow_sena, peddler_brix, itinerant_bard_contact]
+    available_actions: [talk, trade, perform, gather_rumors, inspect]
+    secrets:
+      - The milestone marks a vanished road branch.
+      - A spice stall is a Bell Widow dead-drop.
+    discoverable_items: [ashfen_map_fragment, cheap_luck_charm, crow_feather_quill]
+    quest_hooks: [goat_prophecy, missing_ledger]
+
   - id: ashfen_east_fields
-    name: Ashfen East Fields
-    description: Rolling wheat fields on the village's eastern edge, bordered by an old stone wall.
+    name: East Fields of Ashfen
+    region_id: ashfen_village
+    type: investigation
+    mood: Wind-bent grain, dark dirt, and crows with administrative authority.
+    description: >-
+      The east fields are usually ordinary enough to be ignored, which makes
+      the black spiral in the wheat considerably more upsetting.
+    sublocations:
+      - id: black_wheat_spiral
+        name: Black Wheat Spiral
+      - id: abandoned_windmill
+        name: Abandoned Windmill
+      - id: scarecrow_row
+        name: Scarecrow Row
+      - id: old_root_cellar
+        name: Old Root Cellar
+    npc_ids: [tomas_reed, mother_harl, crow_clerk]
+    available_actions: [investigate, forage, track, dig, talk, ward]
+    secrets:
+      - A broken ward-stone lies beneath the black spiral.
+      - The crows are carrying court summons for the Moss Court.
+      - The windmill's gears form part of an imperial weather instrument.
+    discoverable_items: [black_wheat_sheaf, field_wardstone_fragment, rusted_windmill_key]
+    quest_hooks: [root_below, moss_court_bargain]
+
+  - id: ashfen_old_graveyard
+    name: Ashfen Old Graveyard
+    region_id: ashfen_village
+    type: ritual_hub
+    mood: Leaning stones, wet earth, and bells that ring without hands.
+    description: >-
+      Every family in Ashfen has a grave here, and many have an opinion
+      about the maintenance standards.
+    sublocations:
+      - id: bell_tower_ruin
+        name: Bell Tower Ruin
+      - id: keeper_shed
+        name: Keeper's Shed
+      - id: family_crypts
+        name: Family Crypts
+      - id: unmarked_row
+        name: The Unmarked Row
+    npc_ids: [sister_vesna, old_hob, the_unpaid_dead]
+    available_actions: [perform_rite, investigate, dig, talk, listen, ward]
+    secrets:
+      - The bell tower sits atop a speaking-well for the dead.
+      - One grave is a door rather than a grave.
+      - Old Hob has been dead for forty years and is increasingly tired of correcting people.
+    discoverable_items: [grave_letter, bell_clapper, mourning_salt]
+    quest_hooks: [bell_widows_debt, goat_prophecy]
+
+  - id: candle_archive_outpost
+    name: Candle Archive Outpost
+    region_id: ashfen_village
+    type: research_hub
+    mood: Dust, wax, locked drawers, and the smell of someone hiding a fire.
+    description: >-
+      A narrow stone building packed with records, clerks, and enough sealed
+      cabinets to make honesty feel unlikely.
+    sublocations:
+      - id: archive_reading_room
+        name: Reading Room
+      - id: archive_sealed_stacks
+        name: Sealed Stacks
+      - id: archive_clerk_quarters
+        name: Clerk Quarters
+      - id: archive_basement_vault
+        name: Basement Vault
+    npc_ids: [adjutant_fenn, clerk_malvo, the_index_ghost]
+    available_actions: [research, decode, talk, inspect, file_request, sneak]
+    secrets:
+      - A catalog entry is searching for itself.
+      - The vault map depicts roads that no longer exist.
+      - The Archive possesses a list of every Lantern Anchor except the first.
+    discoverable_items: [archivist_permit, drowned_archive_chart, red_wax_cipher]
+    quest_hooks: [drowned_archive, crownless_lantern]
+
+  - id: old_imperial_road
+    name: The Old Imperial Road
+    region_id: northern_moor
+    type: travel_hub
+    mood: Broken stone, ward-light, and the feeling of being followed by history.
+    description: >-
+      Once a miraculous imperial highway, it now changes distance, remembers
+      uniforms, and occasionally charges tolls in apologies.
+    sublocations:
+      - id: mile_zero
+        name: Mile Zero
+      - id: ruined_tollhouse
+        name: Ruined Tollhouse
+      - id: wardstone_bridge
+        name: Wardstone Bridge
+      - id: soldierless_checkpoint
+        name: Soldierless Checkpoint
+      - id: seventh_mile
+        name: The Missing Seventh Mile
+    npc_ids: [captain_renna_voss, lantern_man, black_reed_patrol]
+    available_actions: [travel, camp, investigate, negotiate, patrol, ward]
+    secrets:
+      - The road is partially awake and remembers every army that crossed it.
+      - The seventh mile appears only at midnight or after a broken oath.
+      - The tollhouse ledger contains debts owed by ghosts.
+    discoverable_items: [roadglass_shard, wardstone_bridge_token, dead_commanders_order]
+    quest_hooks: [black_reed_march, crownless_lantern]
+
+  - id: moss_court_glade
+    name: The Moss Court Glade
+    region_id: wyrdwood
+    type: faction_hub
+    mood: Green dusk, polite predators, and rules nobody has written where you can see them.
+    description: >-
+      A clearing found by people who are avoiding a promise. The Moss Court
+      receives guests with tea, ceremony, and a profound interest in wording.
+    sublocations:
+      - id: throne_of_roots
+        name: Throne of Roots
+      - id: tea_stump
+        name: Tea Stump
+      - id: mirror_pool
+        name: Mirror Pool
+      - id: antler_gate
+        name: Antler Gate
+    npc_ids: [moss_queen, crow_clerk, root_knight]
+    available_actions: [bargain, talk, offer, investigate, travel]
+    secrets:
+      - The Moss Queen is a title passed through an ancient promise.
+      - The mirror pool shows the price before the bargain.
+      - The crow clerk has an overdue filing issue with the village council.
+    discoverable_items: [moss_court_favor, root_key, mirror_pool_water]
+    quest_hooks: [moss_court_bargain, root_below]
+
+  - id: drowned_archive
+    name: The Drowned Archive
+    region_id: drowned_valley
+    type: dungeon_research
+    mood: Ink-dark water, dry shelves beneath the surface, and books that resent being damp.
+    description: >-
+      An imperial archive collapsed into a valley lake. The water avoids
+      certain rooms, suggesting either magic or an unusually strict librarian.
+    sublocations:
+      - id: flooded_scriptorium
+        name: Flooded Scriptorium
+      - id: dry_rotunda
+        name: Dry Rotunda
+      - id: ink_well_chamber
+        name: Ink-Well Chamber
+      - id: submerged_rail
+        name: Submerged Rail
+    npc_ids: [archivist_nine, eel_priest, drowned_scribes]
+    available_actions: [swim, research, bargain, retrieve, ward, solve]
+    secrets:
+      - Archivist Nine deleted the final Lantern instructions deliberately.
+      - A lost memory can be recovered here for a specific but negotiable price.
+      - The archive contains proof that the Lantern was never meant to be permanent.
+    discoverable_items: [lantern_activation_record, archivist_nines_seal, memory_ink_vial]
+    quest_hooks: [drowned_archive, crownless_lantern]
+
+  - id: salt_monastery
+    name: Monastery of the Last Salt
+    region_id: salt_coast
+    type: faction_hub
+    mood: Wind, salt dust, old hymns, and doors nailed shut for sensible reasons.
+    description: >-
+      A cliffside sanctuary where healers preserve the living, honor the
+      dead, and avoid discussing the voice beneath the chapel.
+    sublocations:
+      - id: salt_chapel
+        name: Salt Chapel
+      - id: monastery_infirmary
+        name: Infirmary
+      - id: sealed_crypt
+        name: Sealed Crypt
+      - id: cliff_path
+        name: Cliff Path
+    npc_ids: [brother_cal, saint_orrin, prior_elowen]
+    available_actions: [heal, confess, investigate, pray, bargain, descend]
+    secrets:
+      - Saint Orrin is alive beneath the chapel.
+      - Monastery salt comes from tears shed by oath-breakers.
+      - The saint remembers the first Lantern Anchor.
+    discoverable_items: [salt_vial_of_orrin, saint_chain_link, coastal_prayer_book]
+    quest_hooks: [saint_of_salt, crownless_lantern]
+
+  - id: hollow_crown_ruins
+    name: Hollow Crown Ruins
+    region_id: northern_moor
+    type: endgame
+    mood: Black stone, pale heather, and the sensation of standing inside a verdict.
+    description: >-
+      The first imperial capital stands empty except for its old decisions.
+      The throne room remains prepared for an authority that has not yet
+      learned it is dead.
+    sublocations:
+      - id: throne_without_king
+        name: Throne Without a King
+      - id: broken_observatory
+        name: Broken Observatory
+      - id: ash_garden
+        name: Ash Garden
+      - id: lantern_chamber
+        name: Lantern Chamber
+    npc_ids: [hollow_king_echo, captain_renna_voss, the_last_chancellor]
+    available_actions: [confront, negotiate, activate, destroy, transform, flee]
+    secrets:
+      - The Lantern can be restored, shattered, remade, or bound to a new anchor.
+      - The Hollow King remembers prior attempts and is not entirely honest about them.
+      - Every final route requires a cost, but not always the cost the obvious faction claims.
+    discoverable_items: [crownless_lantern_lens, hollow_crown_key, anchor_chain]
+    quest_hooks: [crownless_lantern]

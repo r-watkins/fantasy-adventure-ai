@@ -99,6 +99,11 @@ export function OriginSelect({ onCreated, onBack }: OriginSelectProps) {
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground">{origin.description}</p>
+                    {origin.playstyle && (
+                      <p className="mt-2 text-xs text-muted-foreground/80">
+                        Playstyle: {origin.playstyle}
+                      </p>
+                    )}
                   </CardContent>
                 </Card>
               </button>

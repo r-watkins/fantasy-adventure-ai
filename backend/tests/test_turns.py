@@ -126,13 +126,16 @@ async def test_save_load_round_trip_preserves_inventory_flags_summary_and_messag
 
 async def test_first_turn_grants_item_via_mock_provider(client: AsyncClient) -> None:
     save_id = await _register_and_create_save(client, "granted@example.com", "tavern_cook")
+    starting_count = len(
+        (await client.get(f"/api/saves/{save_id}")).json()["game_state_json"]["inventory"]
+    )
 
     response = await client.post(f"/api/saves/{save_id}/turns", json={"message": "I look around."})
 
     inventory = response.json()["game_state"]["inventory"]
     item_ids = {entry["item_id"] for entry in inventory}
     assert "iron_cook_knife" in item_ids  # starting item, untouched
-    assert len(item_ids) == 2  # mock provider granted exactly one more
+    assert len(item_ids) == starting_count + 1  # mock provider granted exactly one more
 
 
 async def test_second_turn_increments_and_does_not_regrant(client: AsyncClient) -> None:

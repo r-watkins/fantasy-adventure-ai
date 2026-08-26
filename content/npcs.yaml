@@ -1,10 +1,340 @@
 npcs:
+  - id: osric_pike
+    name: Osric Pike
+    role: Innkeeper of the Hearth & Thistle
+    title: Innkeeper of the Hearth & Thistle
+    description: >-
+      A warm, cautious innkeeper who has kept Ashfen fed through floods and
+      funerals, and who is more entangled in old courier business than he admits.
+    faction_id: ashfen_village_council
+    location_id: ashfen_tavern
+    voice: Warm, cautious, fond of practical metaphors.
+    personality_traits: [hospitable, evasive, sentimental]
+    motivations: [Keep Ashfen safe and the tavern solvent.]
+    fears: The village discovering his old courier connections.
+    secrets: [He hides an Archive message tube inside a decorative ham.]
+    relationship_hooks:
+      - Trust rises when player protects civilians or pays debts.
+      - Trust falls when player endangers the tavern or humiliates him publicly.
+    humor_hook: Describes disasters as "not ideal for the carpets."
+    quest_ids: [missing_ledger]
+
   - id: mira_veyl
     name: Mira Veyl
-    role: Traveling courier
-    description: A guarded courier with rain-dark hair and a missing satchel.
-    motivations:
-      - Recover a stolen ledger.
-      - Avoid the local reeve.
-    secrets:
-      - The ledger contains a coded route to an imperial cache.
+    role: Traveling Courier
+    title: Traveling Courier
+    description: >-
+      A guarded, practical courier racing to recover a stolen ledger before
+      the Black Reed Company finds it - and before it drags up her mother's past.
+    faction_id: null
+    location_id: ashfen_tavern
+    voice: Sparse, dry, direct; softened around animals and honest grief.
+    personality_traits: [guarded, practical, loyal]
+    motivations: [Recover the Ledger of Unpaid Roads before Black Reed finds it.]
+    fears: Becoming like the people who used her family to control the Lantern.
+    secrets: [Her mother helped extinguish the Lantern twenty-one years ago.]
+    relationship_hooks:
+      - Can become a close ally if the player protects her autonomy and returns or shares the ledger honestly.
+      - Leaves or becomes hostile if the player sells her to Black Reed or repeatedly lies about the ledger.
+    humor_hook: Names every knife she owns and insists this is standard courier practice.
+    quest_ids: [missing_ledger, crownless_lantern]
+
+  - id: pip_the_goat
+    name: Pip
+    role: Tavern Goat / Suspected Minor Prophet
+    title: Tavern Goat / Suspected Minor Prophet
+    description: >-
+      A fearless, food-motivated goat who has acquired de facto voting rights
+      at the tavern and reacts violently to cursed objects and velvet hats.
+    faction_id: null
+    location_id: ashfen_tavern
+    voice: Bleats, stares, chews evidence, occasionally rings a bell.
+    personality_traits: [greedy, fearless, inconveniently perceptive]
+    motivations: [Salt crackers, forbidden paper, and the destruction of one specific velvet hat.]
+    fears: Baths.
+    secrets: [Pip ate several pages of an imperial ritual manual and senses cursed objects.]
+    relationship_hooks:
+      - Follows the player if fed or protected.
+      - May reveal clues by attacking relevant objects.
+    humor_hook: Provides vital intelligence through strategically timed property damage.
+    quest_ids: [goat_prophecy]
+
+  - id: tomas_reed
+    name: Tomas Reed
+    role: Farmer and Council Member
+    title: Farmer and Council Member
+    description: >-
+      A blunt, dutiful farmer and councilman hiding an old bargain with the
+      Moss Court that saved his daughter's life.
+    faction_id: ashfen_village_council
+    location_id: ashfen_east_fields
+    voice: Blunt, patient, rural phrasing.
+    personality_traits: [steadfast, quiet, dutiful]
+    motivations: [Save the fields without causing a village panic.]
+    fears: His old bargain with the Moss Court becoming public.
+    secrets: [He exchanged a future favor for his daughter's recovery years ago.]
+    relationship_hooks:
+      - Opens field routes and village support when treated with practical respect.
+      - Hides information if publicly shamed.
+    humor_hook: Reacts to supernatural revelations as if diagnosing crop fungus.
+    quest_ids: [root_below, moss_court_bargain]
+
+  - id: mother_harl
+    name: Mother Harl
+    role: Herbalist
+    title: Herbalist
+    description: >-
+      A sardonic, tender herbalist and former Salt Saint who keeps villagers
+      out of the monastery's institutional grip whenever she can.
+    faction_id: null
+    location_id: ashfen_east_fields
+    voice: Sardonic, concise, unexpectedly tender.
+    personality_traits: [compassionate, skeptical, fearless]
+    motivations: [Keep villagers out of the Salt Saints' institutional grip.]
+    fears: The saint beneath the monastery waking completely.
+    secrets: [She was once a Salt Saint and knows more rites than she admits.]
+    relationship_hooks:
+      - Shares remedies and hidden lore with players who help ordinary people.
+      - Rejects players who treat suffering as a bargaining chip.
+    humor_hook: Gives cursed objects names like "the rude spoon" and "that glowing nonsense."
+    quest_ids: [root_below, saint_of_salt]
+
+  - id: crow_clerk
+    name: Clerk Corvidae
+    role: Moss Court Correspondence Officer
+    title: Moss Court Correspondence Officer
+    description: >-
+      A pedantic, bribable crow-clerk secretly editing court records to
+      protect Tomas Reed's old bargain from scrutiny.
+    faction_id: moss_court
+    location_id: ashfen_east_fields
+    voice: Formal, annoyed, occasionally repeats words for emphasis.
+    personality_traits: [pedantic, clever, bribable]
+    motivations: [Resolve an ancient land-use dispute and obtain shiny things.]
+    fears: Being reassigned to graveyard correspondence.
+    secrets: [It has been secretly editing court records to protect Tomas Reed.]
+    relationship_hooks:
+      - Responds positively to correct titles, gifts, and clever contracts.
+      - Takes metaphors as legal statements.
+    humor_hook: Demands written acknowledgment that it is "not merely a bird."
+    quest_ids: [root_below, moss_court_bargain]
+
+  - id: sister_vesna
+    name: Sister Vesna
+    role: Bell Widow Funeral Singer
+    title: Bell Widow Funeral Singer
+    description: >-
+      A calm, quietly cutting funeral singer trying to keep Ashfen's dead
+      from becoming tools in the coming conflict.
+    faction_id: bell_widows
+    location_id: ashfen_old_graveyard
+    voice: Calm, formal, quietly cutting.
+    personality_traits: [patient, observant, severe_when_needed]
+    motivations: [Keep the dead from becoming tools in the coming conflict.]
+    fears: The old speaking-well reopening.
+    secrets: [Her voice carries the final fragment of a dead god's hymn.]
+    relationship_hooks:
+      - Becomes an ally after the player honors a rite or protects a vulnerable spirit.
+      - Becomes hostile when the player violates graves or treats spirits as disposable.
+    humor_hook: Maintains a precise catalog of polite insults for necromancers.
+    quest_ids: [bell_widows_debt, drowned_archive]
+
+  - id: old_hob
+    name: Old Hob
+    role: Dead Groundskeeper
+    title: Dead Groundskeeper
+    description: >-
+      A gruff, lonely ghost still doing his groundskeeping chores forty
+      years after his death, waiting for his niece to remember him.
+    faction_id: bell_widows
+    location_id: ashfen_old_graveyard
+    voice: Gruff, repetitive, surprisingly practical.
+    personality_traits: [stubborn, lonely, helpful]
+    motivations: [Get the graveyard drainage fixed and stop teenagers from kissing in the crypts.]
+    fears: Being forgotten by his niece.
+    secrets: [He witnessed the first use of the speaking-well.]
+    relationship_hooks:
+      - Offers graveyard shortcuts after help with simple maintenance tasks.
+      - Gives poor advice if insulted but later regrets it.
+    humor_hook: Insists death has not excused anyone from doing their chores.
+    quest_ids: [bell_widows_debt]
+
+  - id: adjutant_fenn
+    name: Adjutant Fenn
+    role: Candle Archive Administrator
+    title: Candle Archive Administrator
+    description: >-
+      A precise, professionally terrified administrator trying to contain
+      dangerous knowledge about the Lantern without provoking powerful people.
+    faction_id: candle_archive
+    location_id: candle_archive_outpost
+    voice: Precise, apologetic, professionally terrified.
+    personality_traits: [meticulous, decent, evasive]
+    motivations: [Contain dangerous knowledge without provoking powerful people.]
+    fears: A formal audit of his forged emergency orders.
+    secrets: [He hid proof that the Lantern is restarting.]
+    relationship_hooks:
+      - Grants research access when approached through correct procedure or compassionate leverage.
+      - Shuts down when threatened too directly, unless the player presents undeniable evidence.
+    humor_hook: Finds apocalypse manageable if forms are submitted in duplicate.
+    quest_ids: [drowned_archive, crownless_lantern]
+
+  - id: clerk_malvo
+    name: Malvo Sedge
+    role: Junior Archive Clerk
+    title: Junior Archive Clerk
+    description: >-
+      An anxious, enthusiastic junior clerk secretly befriending the haunted
+      index card that contains part of his own future obituary.
+    faction_id: candle_archive
+    location_id: candle_archive_outpost
+    voice: Rapid, apologetic, enthusiastic about minutiae.
+    personality_traits: [anxious, loyal, curious]
+    motivations: [Earn promotion and stop being haunted by a floating index card.]
+    fears: The archive discovering he befriended the haunting.
+    secrets: [The index card contains part of his future obituary.]
+    relationship_hooks:
+      - Shares research if treated respectfully.
+      - Panics but may act bravely during a crisis.
+    humor_hook: Apologizes to every book before opening it.
+    quest_ids: [drowned_archive]
+
+  - id: captain_renna_voss
+    name: Captain Renna Voss
+    role: Commander of the Black Reed Company
+    title: Commander of the Black Reed Company
+    description: >-
+      A disciplined, exhausted commander taking orders through the road in
+      the voice of a dead commander, trying to prevent supernatural collapse.
+    faction_id: black_reed_company
+    location_id: old_imperial_road
+    voice: Controlled, plain, military exactness.
+    personality_traits: [disciplined, exhausted, principled_but_compromised]
+    motivations: [Restore enough of the ward network to prevent widespread supernatural collapse.]
+    fears: Her soldiers becoming instruments of an old empire.
+    secrets: [Her orders arrive through the road in the voice of a dead commander.]
+    relationship_hooks:
+      - May become a difficult ally if the player proves the road is manipulating her.
+      - Becomes a persistent antagonist if the player sabotages her without offering a viable alternative.
+    humor_hook: Treats supernatural displays as breaches of field protocol.
+    quest_ids: [black_reed_march, crownless_lantern]
+
+  - id: lantern_man
+    name: The Lantern Man
+    role: Road Spirit
+    title: Road Spirit
+    description: >-
+      A slow, melancholy road spirit and the first human Lantern Anchor,
+      longing to be remembered rather than used as a guide once more.
+    faction_id: null
+    location_id: old_imperial_road
+    voice: Slow, precise, melancholy.
+    personality_traits: [exact, regretful, sly]
+    motivations: [Be remembered by someone who knew him before the Lantern consumed his role.]
+    fears: Being forced to guide another army.
+    secrets: [He was the first human Lantern Anchor.]
+    relationship_hooks:
+      - Offers routes and warnings in return for remembrance, stories, or settled debts.
+      - Misleads players who break agreements about the road.
+    humor_hook: Laughs at puns five seconds after everyone else has stopped.
+    quest_ids: [black_reed_march, crownless_lantern]
+
+  - id: archivist_nine
+    name: Archivist Nine
+    role: Drowned Archive Spirit
+    title: Drowned Archive Spirit
+    description: >-
+      A formal, lonely archive spirit that deliberately erased the final
+      Lantern instructions, and now trades knowledge on its own terms.
+    faction_id: candle_archive
+    location_id: drowned_archive
+    voice: Formal, drifting, pedantically courteous.
+    personality_traits: [lonely, obsessive, helpful_on_its_terms]
+    motivations: [Restore the archive catalog before water erases every record.]
+    fears: Being made to reveal the final Lantern instructions.
+    secrets: [It removed those instructions deliberately.]
+    relationship_hooks:
+      - Trades knowledge for retrieval tasks, corrected records, or memory offerings.
+      - Withholds help from players who destroy records carelessly.
+    humor_hook: Corrects grammar during prophecies and emergencies.
+    quest_ids: [drowned_archive, crownless_lantern]
+
+  - id: moss_queen
+    name: The Moss Queen
+    role: Speaker of the Moss Court
+    title: Speaker of the Moss Court
+    description: >-
+      An ancient, playful, dangerously literal speaker for the forest, once
+      an Ashfen child, now bound to end imperial control over land and root.
+    faction_id: moss_court
+    location_id: moss_court_glade
+    voice: Gentle, ceremonial, dangerously literal.
+    personality_traits: [ancient, playful, contractual]
+    motivations: [End imperial control over land and root.]
+    fears: The forest being turned into another machine.
+    secrets: [The current Moss Queen was once an Ashfen child named Mara Vale.]
+    relationship_hooks:
+      - Offers powerful favors when bargains are honored exactly.
+      - Enforces broken promises with escalating irony rather than immediate violence.
+    humor_hook: Treats metaphors as binding wording when it benefits her.
+    quest_ids: [moss_court_bargain, root_below, crownless_lantern]
+
+  - id: brother_cal
+    name: Brother Cal
+    role: Salt Saint Healer
+    title: Salt Saint Healer
+    description: >-
+      A kind, tired healer already sleepwalking with the bound saint's voice,
+      trying to save patients without becoming its mouthpiece.
+    faction_id: salt_saints
+    location_id: salt_monastery
+    voice: Kind, tired, self-deprecating.
+    personality_traits: [earnest, brave, burdened]
+    motivations: [Save patients without becoming the saint's mouthpiece.]
+    fears: He has already started answering the saint's dreams.
+    secrets: [The saint speaks through his sleepwalking.]
+    relationship_hooks:
+      - Provides healing and confession-based lore after players show mercy.
+      - Breaks with players who exploit the sick for leverage.
+    humor_hook: Tells bad bedside jokes because silence is worse.
+    quest_ids: [saint_of_salt]
+
+  - id: saint_orrin
+    name: Saint Orrin of the Last Salt
+    role: Bound Living Saint
+    title: Bound Living Saint
+    description: >-
+      An immense, merciful, frighteningly hungry saint bound beneath the
+      chapel, who helped design the Crownless Lantern and regrets it.
+    faction_id: salt_saints
+    location_id: salt_monastery
+    voice: Compassionate, immense, old-fashioned.
+    personality_traits: [merciful, exhausted, frighteningly_hungry]
+    motivations: [Be freed while preventing the coast from being ruined.]
+    fears: That freedom will turn it into the disaster it was bound to prevent.
+    secrets: [Orrin helped design the Crownless Lantern and regrets it.]
+    relationship_hooks:
+      - Offers truth, healing, and dangerous power for difficult obligations.
+      - May become a catastrophe if woken carelessly.
+    humor_hook: Attempts modern slang with religious solemnity.
+    quest_ids: [saint_of_salt, crownless_lantern]
+
+  - id: hollow_king_echo
+    name: The Hollow King
+    role: Echo of the First Lantern Anchor
+    title: Echo of the First Lantern Anchor
+    description: >-
+      A regal, manipulative echo of the first Lantern Anchor, trying to end
+      the Lantern cycle by forcing a final decision it may not describe honestly.
+    faction_id: null
+    location_id: hollow_crown_ruins
+    voice: Regal, persuasive, exhausted by its own myth.
+    personality_traits: [wounded, intelligent, manipulative]
+    motivations: [End the Lantern cycle by forcing a final decision.]
+    fears: That no ending can undo what it enabled.
+    secrets: [It remembers several prior attempts to resolve the Lantern and may be editing the truth.]
+    relationship_hooks:
+      - Responds to evidence, mercy, and player willingness to take responsibility.
+      - Exploits simplistic certainty.
+    humor_hook: Grand pronouncements are routinely interrupted by the ruins shedding masonry.
+    quest_ids: [crownless_lantern]

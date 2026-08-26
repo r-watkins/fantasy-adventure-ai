@@ -42,6 +42,26 @@ async def test_list_locations_returns_seeded_locations(client: AsyncClient) -> N
     assert {"ashfen_tavern_kitchen", "ashfen_east_fields"} <= location_ids
 
 
+async def test_list_npcs_returns_seeded_npcs(client: AsyncClient) -> None:
+    await _register(client, "content-npcs@example.com")
+
+    response = await client.get("/api/content/npcs")
+
+    assert response.status_code == 200
+    npc_ids = {npc["id"] for npc in response.json()}
+    assert {"mira_veyl", "osric_pike"} <= npc_ids
+
+
+async def test_list_factions_returns_seeded_factions(client: AsyncClient) -> None:
+    await _register(client, "content-factions@example.com")
+
+    response = await client.get("/api/content/factions")
+
+    assert response.status_code == 200
+    faction_ids = {faction["id"] for faction in response.json()}
+    assert {"ashfen_village_council", "moss_court"} <= faction_ids
+
+
 async def test_list_origins_requires_authentication(client: AsyncClient) -> None:
     response = await client.get("/api/content/origins")
 
@@ -56,5 +76,17 @@ async def test_list_items_requires_authentication(client: AsyncClient) -> None:
 
 async def test_list_locations_requires_authentication(client: AsyncClient) -> None:
     response = await client.get("/api/content/locations")
+
+    assert response.status_code == 401
+
+
+async def test_list_npcs_requires_authentication(client: AsyncClient) -> None:
+    response = await client.get("/api/content/npcs")
+
+    assert response.status_code == 401
+
+
+async def test_list_factions_requires_authentication(client: AsyncClient) -> None:
+    response = await client.get("/api/content/factions")
 
     assert response.status_code == 401
