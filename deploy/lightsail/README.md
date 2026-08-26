@@ -106,43 +106,30 @@ Note the `--profile production` flag - it's required. The `web` (Caddy)
 service is gated behind that profile so that local development, which
 never runs Caddy, doesn't accidentally build and start it too.
 
-Watch the logs during first startup to confirm Caddy obtains its
-certificate successfully:
+Watch the logs during first startup to confirm both the database migration
+and Caddy's certificate succeed:
 
 ```bash
-docker compose logs -f web
+docker compose logs -f api web
 ```
 
-Look for `certificate obtained successfully` in the output. If it never
-appears, double-check DNS has propagated and the firewall allows port 80.
-
-## 7. Run database migrations
-
-The database schema doesn't exist until migrations run - do this once
-after the first `up`:
-
-```bash
-cd /opt/fantasy-ai-adventure
-docker compose exec --user app api /app/.venv/bin/alembic upgrade head
-```
-
-Two things about this command, both found by actually running it:
-
-- Not `uv run alembic ...` - the production image is hardened and doesn't
-  include `uv`; the venv's own `alembic` is already on `PATH` inside the
-  container.
-- `--user app` matters: `docker compose exec` defaults to root (the image
-  has no `USER` directive - see entrypoint.sh below), and a command run
-  that way would create `game.db` as root-owned. The container's actual
-  process runs as the unprivileged `app` user, which then can't write to a
-  file root just created - migrations would appear to succeed but every
-  subsequent request would fail with "attempt to write a readonly
-  database". Always pass `--user app` for any one-off command that touches
-  the database.
+`entrypoint.sh` runs `alembic upgrade head` automatically (as the
+unprivileged `app` user) before the API starts, so no manual migration step
+is needed - look for `Running upgrade ... -> ..., baseline schema` in the
+`api` logs, and `certificate obtained successfully` in the `web` logs. If
+the certificate line never appears, double-check DNS has propagated and the
+firewall allows port 80.
 
 At this point the site should be live at `https://<your-domain>`.
 
-## 8. Set up nightly backups
+If you ever need to run a one-off admin command against the database
+directly (not part of normal deployment), use
+`docker compose exec --user app api /app/.venv/bin/alembic <command>` -
+`--user app` matters because `docker compose exec` defaults to root (the
+image has no `USER` directive), and a root-run command would create
+root-owned files the actual unprivileged process then can't write to.
+
+## 7. Set up nightly backups
 
 Install and enable the backup timer:
 
@@ -171,7 +158,7 @@ sudo systemctl start fantasy-backup.service
 sudo journalctl -u fantasy-backup.service -n 20
 ```
 
-## 9. Test backup restoration
+## 8. Test backup restoration
 
 **An untested backup isn't a backup.** Do this once after your first real
 backup exists, and periodically thereafter. `/opt/fantasy-ai-adventure` is
@@ -265,8 +252,9 @@ safe to run even when nothing changed.
   instance's static IP (`dig +short your-domain`), and that ports 80/443
   are open in the Lightsail firewall (step 4). Check
   `docker compose logs web` for the specific TLS error.
-- **502 from the API**: confirm the `api` container is healthy
-  (`docker compose ps`) and that migrations have been run (step 7).
+- **502 from the API**: confirm the `api` container is healthy and running
+  (`docker compose ps`) - check `docker compose logs api` for a migration
+  failure on startup (step 6) if it's exiting immediately.
 - **Docker commands need `sudo`**: you weren't re-added to the `docker`
   group correctly, or haven't logged back in since bootstrap.sh ran - see
   step 5.
