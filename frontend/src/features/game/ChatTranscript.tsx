@@ -54,6 +54,7 @@ export function ChatTranscript({ messages, pending = false }: ChatTranscriptProp
             <Message
               key={`${message.turn_number}-${message.role}-${index}`}
               align={message.role === 'player' ? 'end' : 'start'}
+              className={message.role === 'player' ? 'pl-12' : 'pr-12'}
             >
               <MessageContent
                 className={

@@ -71,7 +71,7 @@ export function AuthForm({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit} noValidate>
-        <CardContent className="flex flex-col gap-4">
+        <CardContent className="flex flex-col gap-4 pb-6">
           <div className="flex flex-col gap-2">
             <Label htmlFor={emailId}>Email</Label>
             <Input
