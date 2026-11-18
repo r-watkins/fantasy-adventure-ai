@@ -1,45 +1,47 @@
-# Production reverse proxy: serves the built frontend, proxies /api/* to the
-# backend, and terminates HTTPS automatically (Let's Encrypt) once
-# SITE_ADDRESS is set to a real domain that resolves to this host.
+# Application-level reverse proxy for the production `web` container: serves
+# the built frontend and proxies the API. It sits BEHIND the shared edge
+# Caddy (deploy/edge/), which owns ports 80/443, TLS, the landing page and
+# the static prototypes, and forwards /fantasy-adventure-ai* here unchanged.
+# So this instance speaks plain HTTP only, on the internal `edge` Docker
+# network, and security headers / compression live at the edge.
 #
-# Mounted by docker-compose.yml's `web` service (Task 50, `--profile
-# production`), which also builds the frontend production image (Task 48)
-# that provides the static files served from /srv below. Verified live
-# end-to-end during Tasks 48/50: handle-block ordering (/api/* before the
-# catch-all), the SPA try_files fallback, and automatic HTTPS all behave as
-# intended - real domains get a real Let's Encrypt cert automatically; no
-# further config is needed here for that.
-{$SITE_ADDRESS:localhost} {
-	encode zstd gzip
+# Everything is served under the /fantasy-adventure-ai prefix. That prefix
+# must match, exactly:
+#   - the frontend build arg VITE_BASE_PATH=/fantasy-adventure-ai/ (set in
+#     docker-compose.yml) - a mismatch shows up as a blank page, because the
+#     SPA fallback below answers missing asset URLs with index.html (200);
+#   - SESSION_COOKIE_PATH=/fantasy-adventure-ai in .env (backend cookie);
+#   - the routes in deploy/edge/Caddyfile.
+{
+	auto_https off
+}
 
-	# Task 55 security hardening pass. Applied globally (both the API proxy
-	# and the frontend) since HSTS/nosniff are meaningful for JSON responses
-	# too, not just HTML. Content-Security-Policy is deliberately omitted -
-	# the frontend has an inline pre-paint theme script (Task 8) that would
-	# need a nonce/hash to survive a strict CSP, and there's no build step
-	# to keep a hash in sync automatically if that script is ever edited -
-	# user confirmed deferring CSP as a follow-up rather than shipping a
-	# fragile or overly-permissive policy now.
-	header {
-		Strict-Transport-Security "max-age=31536000; includeSubDomains"
-		X-Content-Type-Options "nosniff"
-		X-Frame-Options "DENY"
-		Referrer-Policy "strict-origin-when-cross-origin"
-		Permissions-Policy "geolocation=(), camera=(), microphone=()"
-	}
+:80 {
+	# The bare prefix needs an explicit redirect to the slash form: the
+	# handle_path block below only matches /fantasy-adventure-ai/*.
+	redir /fantasy-adventure-ai /fantasy-adventure-ai/ 308
 
-	# Must come before the catch-all `handle` block below: `handle` blocks are
-	# mutually exclusive and evaluated in the order they're written, so a
-	# request matching /api/* would otherwise also match the catch-all first.
-	handle /api/* {
+	# Must come before the SPA block below: `handle` blocks are mutually
+	# exclusive and evaluated in the order they're written. The prefix is
+	# stripped so the backend keeps serving plain /api/*.
+	handle /fantasy-adventure-ai/api/* {
+		uri strip_prefix /fantasy-adventure-ai
 		reverse_proxy api:8000
 	}
 
-	handle {
+	# handle_path strips the prefix, so the built files stay at the root of
+	# /srv exactly as they were when the app was served from the domain root.
+	handle_path /fantasy-adventure-ai/* {
 		root * /srv
 		# SPA fallback: client-side routes (e.g. a deep link refreshed in the
 		# browser) must still resolve to index.html, not 404.
 		try_files {path} /index.html
 		file_server
+	}
+
+	# Anything else (the edge only forwards the prefix, so this is just a
+	# guard against direct access on the internal network).
+	handle {
+		respond "Not found" 404
 	}
 }

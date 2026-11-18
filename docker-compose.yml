@@ -29,15 +29,23 @@ services:
       - production
     build:
       context: ./frontend
-    env_file:
-      - .env
+      args:
+        # Public path the built frontend is served under. Must match the
+        # prefix in deploy/Caddyfile, deploy/edge/Caddyfile and
+        # SESSION_COOKIE_PATH in .env.
+        VITE_BASE_PATH: /fantasy-adventure-ai/
     volumes:
       - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
-    ports:
-      - "80:80"
-      - "443:443"
+    # No published ports: the shared edge Caddy (deploy/edge/) owns 80/443
+    # and reaches this container over the external `edge` network by the
+    # alias below. It stays on the default network too, to reach `api`.
+    networks:
+      default: {}
+      edge:
+        aliases:
+          - fantasy-web
     depends_on:
       - api
     restart: unless-stopped
@@ -46,3 +54,10 @@ volumes:
   sqlite_data:
   caddy_data:
   caddy_config:
+
+networks:
+  # Created once on the host (`docker network create edge`); shared with the
+  # edge compose project in deploy/edge/. Only the production `web` service
+  # joins it, so local dev never needs it to exist.
+  edge:
+    external: true
