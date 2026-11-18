@@ -4,7 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_current_session
 from app.core.config import get_settings
 from app.core.rate_limit import limiter
-from app.core.security import clear_session_cookie, set_session_cookie
+from app.core.security import (
+    clear_legacy_session_cookie,
+    clear_session_cookie,
+    set_session_cookie,
+)
 from app.db.session import get_db_session
 from app.models.session import UserSession
 from app.schemas.auth import LoginRequest, RegisterRequest, UserPublic
@@ -17,6 +21,24 @@ from app.services.auth_service import (
 )
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+def _issue_session_cookie(response: Response, token: str) -> None:
+    settings = get_settings()
+    secure = settings.environment == "production"
+    set_session_cookie(response, token, secure=secure, path=settings.session_cookie_path)
+    if settings.session_cookie_path != "/":
+        # See clear_legacy_session_cookie: a leftover Path=/ cookie would
+        # otherwise shadow the freshly scoped one.
+        clear_legacy_session_cookie(response, secure=secure)
+
+
+def _remove_session_cookie(response: Response) -> None:
+    settings = get_settings()
+    secure = settings.environment == "production"
+    clear_session_cookie(response, secure=secure, path=settings.session_cookie_path)
+    if settings.session_cookie_path != "/":
+        clear_legacy_session_cookie(response, secure=secure)
 
 
 @router.post("/register", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
@@ -34,8 +56,7 @@ async def register(
             status.HTTP_409_CONFLICT, detail="Email is already registered"
         ) from exc
 
-    settings = get_settings()
-    set_session_cookie(response, token, secure=settings.environment == "production")
+    _issue_session_cookie(response, token)
 
     return UserPublic.model_validate(user)
 
@@ -54,8 +75,7 @@ async def login(
 
     token = await create_session(db, user.id)
 
-    settings = get_settings()
-    set_session_cookie(response, token, secure=settings.environment == "production")
+    _issue_session_cookie(response, token)
 
     return UserPublic.model_validate(user)
 
@@ -67,5 +87,4 @@ async def logout(
 ) -> None:
     revoke_session(session)
 
-    settings = get_settings()
-    clear_session_cookie(response, secure=settings.environment == "production")
+    _remove_session_cookie(response)

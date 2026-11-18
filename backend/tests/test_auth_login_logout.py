@@ -1,5 +1,7 @@
 import pytest
-from httpx import AsyncClient
+from httpx import AsyncClient, Response
+
+from app.core.config import get_settings
 
 pytestmark = pytest.mark.anyio
 
@@ -89,3 +91,82 @@ async def test_logout_without_session_cookie_is_unauthorized(client: AsyncClient
     response = await client.post("/api/auth/logout")
 
     assert response.status_code == 401
+
+
+SUBDIRECTORY = "/fantasy-adventure-ai"
+CREDENTIALS = {"email": "scoped@example.com", "password": "correct horse battery"}
+
+
+def _use_subdirectory_cookie_path(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("SESSION_COOKIE_PATH", SUBDIRECTORY)
+    get_settings.cache_clear()
+
+
+def _session_cookie_headers(response: Response) -> list[str]:
+    return [
+        header
+        for header in response.headers.get_list("set-cookie")
+        if header.startswith("session_token=")
+    ]
+
+
+async def test_login_scopes_cookie_and_clears_legacy_cookie_under_subdirectory(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _use_subdirectory_cookie_path(monkeypatch)
+    await client.post("/api/auth/register", json=CREDENTIALS)
+    client.cookies.clear()
+
+    response = await client.post("/api/auth/login", json=CREDENTIALS)
+
+    assert response.status_code == 200
+    scoped, legacy = _session_cookie_headers(response)
+    assert f"Path={SUBDIRECTORY}" in scoped
+    assert "Max-Age=0" not in scoped
+    assert "Max-Age=0" in legacy
+    assert "Path=/;" in legacy
+
+
+async def test_register_scopes_cookie_and_clears_legacy_cookie_under_subdirectory(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _use_subdirectory_cookie_path(monkeypatch)
+
+    response = await client.post("/api/auth/register", json=CREDENTIALS)
+
+    assert response.status_code == 201
+    scoped, legacy = _session_cookie_headers(response)
+    assert f"Path={SUBDIRECTORY}" in scoped
+    assert "Max-Age=0" in legacy
+    assert "Path=/;" in legacy
+
+
+async def test_logout_clears_scoped_and_legacy_cookies_under_subdirectory(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _use_subdirectory_cookie_path(monkeypatch)
+    register_response = await client.post("/api/auth/register", json=CREDENTIALS)
+    token = register_response.headers["set-cookie"].split("session_token=")[1].split(";")[0]
+    # The scoped cookie isn't sent to /api/... by the test client's jar (the
+    # real proxy path includes the prefix), so present it explicitly.
+    client.cookies.clear()
+
+    response = await client.post("/api/auth/logout", headers={"Cookie": f"session_token={token}"})
+
+    assert response.status_code == 204
+    scoped, legacy = _session_cookie_headers(response)
+    assert f"Path={SUBDIRECTORY}" in scoped
+    assert "Max-Age=0" in scoped
+    assert "Max-Age=0" in legacy
+    assert "Path=/;" in legacy
+
+
+async def test_login_at_default_path_sets_a_single_root_cookie(client: AsyncClient) -> None:
+    await client.post("/api/auth/register", json=CREDENTIALS)
+    client.cookies.clear()
+
+    response = await client.post("/api/auth/login", json=CREDENTIALS)
+
+    (only_cookie,) = _session_cookie_headers(response)
+    assert "Path=/;" in only_cookie
+    assert "Max-Age=0" not in only_cookie
