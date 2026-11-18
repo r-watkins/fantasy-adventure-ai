@@ -1,3 +1,5 @@
+import { getBasePath } from './base-path'
+
 export class ApiError extends Error {
   status: number
   detail: unknown
@@ -12,7 +14,10 @@ export class ApiError extends Error {
 type JsonBody = Record<string, unknown>
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, {
+  // Callers pass root-absolute paths (`/api/...`); when the app is hosted
+  // under a subdirectory the reverse proxy routes `<base>/api/...` to the
+  // backend, so the base path is prefixed here in one place.
+  const response = await fetch(`${getBasePath()}${path}`, {
     ...init,
     // Session auth is an HttpOnly cookie (never localStorage), so every
     // request needs the browser to actually send it - including

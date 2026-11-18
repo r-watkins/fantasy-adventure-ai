@@ -16,6 +16,7 @@ describe('apiClient', () => {
 
   afterEach(() => {
     vi.unstubAllGlobals()
+    vi.unstubAllEnvs()
   })
 
   it('sends credentials: include on every request', async () => {
@@ -25,6 +26,18 @@ describe('apiClient', () => {
 
     expect(fetch).toHaveBeenCalledWith(
       '/api/me',
+      expect.objectContaining({ credentials: 'include', method: 'GET' }),
+    )
+  })
+
+  it('prefixes the app base path when hosted under a subdirectory', async () => {
+    vi.stubEnv('BASE_URL', '/fantasy-adventure-ai/')
+    vi.mocked(fetch).mockResolvedValue(jsonResponse(200, { ok: true }))
+
+    await apiClient.get('/api/me')
+
+    expect(fetch).toHaveBeenCalledWith(
+      '/fantasy-adventure-ai/api/me',
       expect.objectContaining({ credentials: 'include', method: 'GET' }),
     )
   })
