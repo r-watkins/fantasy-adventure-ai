@@ -45,3 +45,14 @@ jobs:
       - run: npx tsc -b
       - run: npm run test
       - run: npm run build
+
+      # The production image builds with a subdirectory base path. A wrong or
+      # ignored base shows up in the browser as a blank page (the SPA fallback
+      # answers missing assets with index.html), so fail here instead.
+      - name: Build under the production base path
+        env:
+          VITE_BASE_PATH: /fantasy-adventure-ai/
+        run: |
+          npm run build
+          grep -q 'src="/fantasy-adventure-ai/assets/' dist/index.html
+          grep -q 'href="/fantasy-adventure-ai/favicon.svg"' dist/index.html
