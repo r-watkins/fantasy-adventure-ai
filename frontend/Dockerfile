@@ -8,6 +8,9 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+# Public path the built app is served under (must match the reverse proxy's
+# prefix, including leading and trailing slash). Defaults to the domain root.
+ARG VITE_BASE_PATH=/
 RUN npm run build
 
 # caddy:2-alpine's own default CMD already runs `caddy run` against

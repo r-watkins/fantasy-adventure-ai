@@ -7,6 +7,11 @@ import { defineConfig } from 'vitest/config'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Build-time public path. Defaults to `/` so dev, vitest and Playwright
+  // stay at the root; the production image sets it to the subdirectory the
+  // app is hosted under (e.g. `/fantasy-adventure-ai/`). Router and API
+  // client read it back via `import.meta.env.BASE_URL`.
+  base: process.env.VITE_BASE_PATH || '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
