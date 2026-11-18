@@ -21,6 +21,7 @@ import { GameScreen } from '@/features/game/GameScreen'
 import { OriginSelect } from '@/features/setup/OriginSelect'
 import { SaveSlotSelect } from '@/features/setup/SaveSlotSelect'
 import { SettingsScreen } from '@/features/settings/SettingsScreen'
+import { getBasePath } from '@/lib/base-path'
 
 import { fetchCurrentUser } from './auth-guard'
 
@@ -195,7 +196,10 @@ const routeTree = rootRoute.addChildren([
   settingsRoute,
 ])
 
-export const router = createRouter({ routeTree })
+// `basepath` makes every route, `<Link>`, `navigate` and `redirect` resolve
+// under the subdirectory the app is hosted at (a no-op at the domain root),
+// so the route definitions above stay written as root-relative paths.
+export const router = createRouter({ routeTree, basepath: getBasePath() || '/' })
 
 declare module '@tanstack/react-router' {
   interface Register {
