@@ -80,6 +80,8 @@ if [ "${NEEDS_RELOGIN:-0}" = "1" ]; then
 	echo "    Log out and back in (or run 'newgrp docker') to use docker without sudo."
 fi
 echo "    Next steps:"
-echo "      1. Edit $INSTALL_DIR/.env - set GEMINI_API_KEY and SITE_ADDRESS (your real domain) at minimum."
-echo "      2. cd $INSTALL_DIR && docker compose --profile production up -d --build"
-echo "      3. Run migrations: docker compose exec api /app/.venv/bin/alembic upgrade head"
+echo "      1. Edit $INSTALL_DIR/.env - set GEMINI_API_KEY, ENVIRONMENT=production and SESSION_COOKIE_PATH=/fantasy-adventure-ai at minimum."
+echo "      2. docker network create edge, then: cd $INSTALL_DIR && docker compose --profile production up -d --build"
+echo "         (database migrations run automatically on API start)"
+echo "      3. Start the shared edge proxy: cd $INSTALL_DIR/deploy/edge, copy .env.example to .env, set SITE_ADDRESS to your real domain, then docker compose up -d"
+echo "         See deploy/lightsail/README.md for the full walkthrough."

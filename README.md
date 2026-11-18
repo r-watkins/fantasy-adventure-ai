@@ -1,6 +1,6 @@
 # Fantasy AI Adventure
 
-[![Demo](https://img.shields.io/badge/Demo-Live%20App-brightgreen?style=for-the-badge)](https://my-open-works.net)
+[![Demo](https://img.shields.io/badge/Demo-Live%20App-brightgreen?style=for-the-badge)](https://my-open-works.net/fantasy-adventure-ai/)
 
 An open-source, self-hostable, browser-based fantasy text adventure. Players interact with an AI narrator through a chat interface that sets scenes, portrays NPCs, reacts to free-form player actions, and develops an ongoing adventure in the style of a tabletop fantasy role-playing session.
 
@@ -82,20 +82,27 @@ All variables live in `.env` (copied from `.env.example`, gitignored). Docker Co
 | `GEMINI_SAFETY_DANGEROUS_CONTENT` | `BLOCK_ONLY_HIGH` | Safety threshold for dangerous-content generation. One of `BLOCK_NONE` \| `BLOCK_ONLY_HIGH` \| `BLOCK_MEDIUM_AND_ABOVE` \| `BLOCK_LOW_AND_ABOVE` \| `OFF`. |
 | `GEMINI_SAFETY_HARASSMENT` | `BLOCK_ONLY_HIGH` | Safety threshold for harassment content. Same value set as above. |
 | `GEMINI_SAFETY_SEXUALLY_EXPLICIT` | `BLOCK_MEDIUM_AND_ABOVE` | Safety threshold for sexually explicit content. Same value set as above. |
-| `SITE_ADDRESS` | `localhost` | Production-only: the domain Caddy serves and obtains HTTPS for (`deploy/Caddyfile`). Not used in local dev. |
+| `SESSION_COOKIE_PATH` | `/` | Path attribute of the session cookie. Keep `/` for local dev; production sets `/fantasy-adventure-ai` so the cookie isn't sent to other apps sharing the domain. The domain itself (`SITE_ADDRESS`) is configured for the edge proxy in `deploy/edge/.env`, not here. |
 | `CONTENT_DIR` | `../content` | Path to the world/items/NPCs/origins YAML content. Overridden to a container-internal path by Docker Compose regardless of `.env` (see above). |
 | `MAX_ITEM_QUANTITY` | `99` | Upper bound the server enforces on any LLM-proposed item quantity (`add_item`/`remove_item`). Provisional - no specific number is mandated anywhere upstream. |
 | `RECENT_CONTEXT_WINDOW` | `10` | Number of recent player/narrator messages kept in the rolling context sent to the LLM each turn. Larger values improve narrative continuity at the cost of more tokens per Gemini call. |
 
 ## Production deployment
 
+In production the app is served under a subdirectory, `https://<domain>/fantasy-adventure-ai/`, so the same domain can host a landing page and other small static prototypes at `/prototypes/<id>/`. Two Docker Compose projects cooperate over a shared `edge` Docker network:
+
+- **App** (this directory's `docker-compose.yml`, `--profile production`): `api` plus a `web` container (Caddy) that serves the frontend built with the `/fantasy-adventure-ai/` base path and proxies `/fantasy-adventure-ai/api/*` to the backend. It publishes no ports.
+- **Edge** (`deploy/edge/`): the shared Caddy that owns ports 80/443 and automatic HTTPS, serves the landing page and the prototypes folder, and forwards `/fantasy-adventure-ai*` to the app.
+
 ```bash
-docker compose --profile production up -d --build
+docker network create edge                                  # once per host
+docker compose --profile production up -d --build           # the app
+cd deploy/edge && cp .env.example .env && docker compose up -d   # the edge (set SITE_ADDRESS first)
 ```
 
-The `--profile production` flag matters — it's what starts the Caddy `web` service (reverse proxy + automatic HTTPS) alongside `api`. Without it, only `api` starts, which is what local dev overlays use instead (`docker-compose.dev.yml` never runs Caddy).
+The `--profile production` flag matters — it's what starts the Caddy `web` service alongside `api`. Without it, only `api` starts, which is what local dev overlays use instead (`docker-compose.dev.yml` never runs Caddy, and local dev stays at `http://localhost:5173/` with no subdirectory).
 
-This assumes `.env` is already configured with a real `GEMINI_API_KEY` and a `SITE_ADDRESS` that resolves to the host. For the complete walkthrough — provisioning a fresh AWS Lightsail instance, DNS, firewall rules, running migrations, nightly backups, and testing backup restoration — see **[deploy/lightsail/README.md](deploy/lightsail/README.md)**.
+The subdirectory is a build-time setting (`VITE_BASE_PATH` in `docker-compose.yml`) that must match `deploy/Caddyfile`, `deploy/edge/Caddyfile` and `SESSION_COOKIE_PATH`; a mismatch shows up as a blank page. This assumes `.env` is already configured with a real `GEMINI_API_KEY`, `ENVIRONMENT=production` and `SESSION_COOKIE_PATH=/fantasy-adventure-ai`. For the complete walkthrough — provisioning a fresh AWS Lightsail instance, DNS, firewall rules, the edge proxy, adding prototypes, migrating an existing root-level deployment, nightly backups, and testing backup restoration — see **[deploy/lightsail/README.md](deploy/lightsail/README.md)**.
 
 ## Stack
 
