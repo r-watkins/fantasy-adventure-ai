@@ -49,7 +49,7 @@ def session_expires_at() -> datetime:
     return datetime.now(UTC) + SESSION_TTL
 
 
-def set_session_cookie(response: Response, token: str, *, secure: bool) -> None:
+def set_session_cookie(response: Response, token: str, *, secure: bool, path: str = "/") -> None:
     response.set_cookie(
         key=SESSION_COOKIE_NAME,
         value=token,
@@ -57,13 +57,28 @@ def set_session_cookie(response: Response, token: str, *, secure: bool) -> None:
         httponly=True,
         secure=secure,
         samesite="strict",
+        # Scoped (e.g. to the subdirectory the app is hosted under) so the
+        # cookie isn't sent to other apps sharing the domain.
+        path=path,
     )
 
 
-def clear_session_cookie(response: Response, *, secure: bool) -> None:
+def clear_session_cookie(response: Response, *, secure: bool, path: str = "/") -> None:
+    # A cookie is only deleted when the delete uses the same Path it was set
+    # with, so this must be given the same `path` as set_session_cookie.
     response.delete_cookie(
         key=SESSION_COOKIE_NAME,
         httponly=True,
         secure=secure,
         samesite="strict",
+        path=path,
     )
+
+
+def clear_legacy_session_cookie(response: Response, *, secure: bool) -> None:
+    # Before the session cookie was scoped to a subdirectory it was set with
+    # Path=/. Browsers still hold (and send) those, and when two cookies share
+    # a name the less specific one is parsed last and wins, so the old cookie
+    # must be actively deleted - it cannot just be left to expire. Safe to
+    # remove once the longest-lived legacy cookie (SESSION_TTL) has expired.
+    clear_session_cookie(response, secure=secure, path="/")

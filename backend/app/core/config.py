@@ -19,6 +19,10 @@ class Settings(BaseSettings):
 
     environment: Literal["development", "production"] = "development"
     database_url: str = "sqlite+aiosqlite:///./data/game.db"
+    # Path attribute of the session cookie. "/" for the domain root; set to
+    # the hosting subdirectory (e.g. "/fantasy-adventure-ai") when the app
+    # shares a domain with other apps, so the cookie isn't sent to them.
+    session_cookie_path: str = "/"
     llm_provider: Literal["mock", "gemini"] = "mock"
     gemini_api_key: str = ""
     # gemini-2.5-flash-lite (research.md's original pin) is no longer

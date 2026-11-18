@@ -7,6 +7,7 @@ from fastapi import Response
 from app.core.security import (
     SESSION_COOKIE_NAME,
     SESSION_TTL,
+    clear_legacy_session_cookie,
     clear_session_cookie,
     generate_session_token,
     hash_password,
@@ -119,3 +120,41 @@ def test_clear_session_cookie_expires_immediately() -> None:
     cookie_header = response.headers["set-cookie"]
     assert f"{SESSION_COOKIE_NAME}=" in cookie_header
     assert 'Max-Age=0' in cookie_header
+
+
+def test_session_cookie_defaults_to_root_path() -> None:
+    response = Response()
+
+    set_session_cookie(response, "opaque-token-value", secure=True)
+
+    assert "Path=/;" in response.headers["set-cookie"]
+
+
+def test_set_session_cookie_uses_given_path() -> None:
+    response = Response()
+
+    set_session_cookie(response, "opaque-token-value", secure=True, path="/fantasy-adventure-ai")
+
+    assert "Path=/fantasy-adventure-ai" in response.headers["set-cookie"]
+
+
+def test_clear_session_cookie_uses_given_path() -> None:
+    response = Response()
+
+    clear_session_cookie(response, secure=True, path="/fantasy-adventure-ai")
+
+    cookie_header = response.headers["set-cookie"]
+    assert "Path=/fantasy-adventure-ai" in cookie_header
+    assert "Max-Age=0" in cookie_header
+
+
+def test_clear_legacy_session_cookie_targets_root_path() -> None:
+    response = Response()
+
+    clear_legacy_session_cookie(response, secure=True)
+
+    cookie_header = response.headers["set-cookie"]
+    assert f"{SESSION_COOKIE_NAME}=" in cookie_header
+    assert "Max-Age=0" in cookie_header
+    assert "Path=/;" in cookie_header
+    assert "Path=/fantasy-adventure-ai" not in cookie_header
