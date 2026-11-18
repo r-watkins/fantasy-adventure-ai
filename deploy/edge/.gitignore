@@ -1,0 +1,4 @@
+# Local prototype build output and the local env file - not tracked.
+.env
+prototypes/*
+!prototypes/.gitkeep

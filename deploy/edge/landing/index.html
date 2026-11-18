@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>my-open-works</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --background: #fafaf9;
+        --foreground: #1c1917;
+        --muted: #57534e;
+        --border: #e7e5e4;
+        --accent: #7c2d12;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #0c0a09;
+          --foreground: #fafaf9;
+          --muted: #a8a29e;
+          --border: #292524;
+          --accent: #fdba74;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100svh;
+        background: var(--background);
+        color: var(--foreground);
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.5;
+      }
+      main {
+        max-width: 40rem;
+        margin: 0 auto;
+        padding: 4rem 1.5rem;
+      }
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: 1.75rem;
+        font-weight: 600;
+      }
+      h2 {
+        margin: 2.5rem 0 0.75rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      p {
+        margin: 0;
+        color: var(--muted);
+      }
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border-top: 1px solid var(--border);
+      }
+      li {
+        border-bottom: 1px solid var(--border);
+      }
+      a {
+        display: block;
+        padding: 0.875rem 0;
+        color: var(--foreground);
+        text-decoration: none;
+      }
+      a:hover .title,
+      a:focus-visible .title {
+        color: var(--accent);
+        text-decoration: underline;
+      }
+      a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .title {
+        font-weight: 500;
+      }
+      .blurb {
+        display: block;
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>my-open-works</h1>
+      <p>Small experiments and prototypes.</p>
+
+      <h2>Apps</h2>
+      <ul>
+        <li>
+          <a href="/fantasy-adventure-ai/">
+            <span class="title">Fantasy AI Adventure</span>
+            <span class="blurb">A grounded high-fantasy text adventure set in the Ashfen Realm.</span>
+          </a>
+        </li>
+      </ul>
+
+      <h2>Prototypes</h2>
+      <!--
+        Add one <li> per prototype dropped into the prototypes folder, e.g.:
+        <li>
+          <a href="/prototypes/my-prototype/">
+            <span class="title">My prototype</span>
+            <span class="blurb">One-line description.</span>
+          </a>
+        </li>
+      -->
+      <p>Nothing here yet.</p>
+    </main>
+  </body>
+</html>

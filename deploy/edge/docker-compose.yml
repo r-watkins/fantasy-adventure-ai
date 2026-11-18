@@ -1,0 +1,40 @@
+# Shared edge reverse proxy for my-open-works.net: owns ports 80/443 and TLS,
+# serves the landing page at /, static prototypes at /prototypes/<id>/, and
+# forwards /fantasy-adventure-ai* to the app's own `web` container.
+#
+# A separate compose project from the app on purpose, so deploying a
+# prototype never restarts the app and redeploying the app never drops the
+# prototypes. Run it from this directory:
+#   docker network create edge     # once per host
+#   cp .env.example .env           # then set SITE_ADDRESS
+#   docker compose up -d
+services:
+  edge:
+    image: caddy:2.11-alpine
+    restart: unless-stopped
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./landing:/srv/landing:ro
+      # Built static prototypes, one folder per id: <dir>/<id>/index.html is
+      # served at /prototypes/<id>/. Adding one needs no config change.
+      - ${PROTOTYPES_DIR:-./prototypes}:/srv/prototypes:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      # The host ports are overridable only so the stack can be smoke-tested
+      # locally when 80/443 are taken; production uses the defaults.
+      - "${EDGE_HTTP_PORT:-80}:80"
+      - "${EDGE_HTTPS_PORT:-443}:443"
+    networks:
+      - edge
+
+networks:
+  # Shared with the app's `web` service (see the root docker-compose.yml).
+  edge:
+    external: true
+
+volumes:
+  caddy_data:
+  caddy_config:
