@@ -35,13 +35,15 @@
 	# they're no longer in use (the old /api/* URLs can't be redirected).
 	@legacy path /saves /saves/* /new-game /new-game/* /game/* /settings /settings/*
 	handle @legacy {
-		redir /fantasy-adventure-ai{uri} 302
+		# `*` is required: a first argument starting with / would be parsed as a
+		# path matcher, not as the redirect target.
+		redir * /fantasy-adventure-ai{uri} 302
 	}
 
 	# There is no prototypes index - the landing page is the directory.
 	@prototypes_index path /prototypes /prototypes/
 	handle @prototypes_index {
-		redir / 302
+		redir * / 302
 	}
 
 	# Static prototypes, mounted at /srv/prototypes so the URL path maps
